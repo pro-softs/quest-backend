@@ -84,8 +84,8 @@ The story must both entertain and teach — blending real knowledge with fiction
 Topic: "${topic}"
 
 Format:
-- Structure the story into 1 episodes.
-- Each episode should have a title and 1 scenes.
+- Structure the story into 3 to 4 episodes.
+- Each episode should have a title and 8 to 10 scenes.
 - Each scene must include:
   - "description": a vivid visual description of the scene (setting, action, emotion)
   - "dialogue": a short 1–2 line narration or character conversation driving the story
