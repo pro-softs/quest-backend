@@ -16,6 +16,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 // Create jobs directory if it doesn't exist
 const jobsDir = path.join(__dirname, '..', 'jobs');
