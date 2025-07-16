@@ -15,7 +15,7 @@ const router = express.Router();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const TMP_DIR = path.join(__dirname, '..', 'tmp');
+const TMP_DIR = path.join(__dirname, '..', '..', 'tmp');
 
 router.post('/generate-episodes', validateEpisodeRequest, generateEpisodes);
 
@@ -59,7 +59,7 @@ router.post('/generate-scenes', async (req, res) => {
 
     res.json({ status: 'done_images', requestId });
   } catch (err) {
-    console.error('Voiceover generation error:', err);
+    console.error('Image generation error:', err);
     res.status(500).json({ error: 'Failed to generate audio' });
   }
 });
