@@ -8,6 +8,7 @@ const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 const ELEVENLABS_VOICE_ID = process.env.ELEVENLABS_VOICE_ID || 'Rachel';
 
 export async function generateVoice(text, outputPath) {
+  console.log(text);
   try {
     console.log('🎙️ Generating voiceover from ElevenLabs...');
 
@@ -47,14 +48,18 @@ export async function generateVoice(text, outputPath) {
 
   } catch (error) {
     if (error.response) {
-      console.error('❌ ElevenLabs API responded with error:', {
+      const errorText = Buffer.isBuffer(error.response.data)
+        ? error.response.data.toString()
+        : JSON.stringify(error.response.data, null, 2);
+
+      console.error('❌ ElevenLabs API error:', {
         status: error.response.status,
-        data: error.response.data,
+        message: errorText,
       });
-    } else if (error.request) {
-      console.error('❌ No response received from ElevenLabs:', error.request);
+    } else if (error.code === 'ECONNABORTED') {
+      console.error('❌ Timeout: ElevenLabs request took too long');
     } else {
-      console.error('❌ Error setting up request:', error.message);
+      console.error('❌ Unexpected error in voiceover generation:', error.message);
     }
 
     throw new Error('Failed to generate voiceover');
