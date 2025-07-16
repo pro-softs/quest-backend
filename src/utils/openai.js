@@ -55,7 +55,7 @@ export class OpenAIService {
         } else {
           throw new Error(`Unexpected response: ${JSON.stringify(response.data)}`);
         }
-      } catch (error) {
+      } catch (err) {
         const isRateLimit = err.response?.status === 429;
         const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000; // backoff + jitter
 
