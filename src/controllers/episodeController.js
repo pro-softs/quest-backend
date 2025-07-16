@@ -50,6 +50,7 @@ export const generateEpisodes = async (req, res) => {
     const response = {
       status: "image_done",
       requestId,
+      episodes,
     };
 
     // Save job to queue for video rendering simulation
