@@ -1,55 +1,53 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
-import { ElevenLabsClient } from '@elevenlabs/elevenlabs-js';
-import { createWriteStream } from 'fs';
-import path from 'path';
-import { v4 as uuid } from 'uuid';
+import fs from 'fs';
 
 dotenv.config();
 
-const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
-const ELEVENLABS_VOICE_ID = process.env.ELEVENLABS_VOICE_ID || 'JBFqnCBsd6RMkjVDRZzb'; // fallback default voice
+export const generateVoice = async (text, outputPath) => {
+  const voice = 'nova'; // Options: alloy, echo, fable, onyx, nova, shimmer
+  const model = 'tts-1'; // or tts-1-hd
 
-const elevenlabs = new ElevenLabsClient({ apiKey: ELEVENLABS_API_KEY });
+  try {
+    console.log('🎙️ Requesting TTS from OpenAI...');
 
-export const generateVoice = async (text, path) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      console.log('🎙️ Requesting voiceover from ElevenLabs...');
-
-      const audioStream = await elevenlabs.textToSpeech.convert(ELEVENLABS_VOICE_ID, {
-        modelId: 'eleven_multilingual_v2',
-        text,
-        outputFormat: 'mp3_44100_64',
-        voiceSettings: {
-          stability: 0.5,
-          similarityBoost: 0.5,
-          useSpeakerBoost: true,
-          speed: 1.0,
+    const response = await axios.post(
+      'https://api.openai.com/v1/audio/speech',
+      {
+        model,
+        voice,
+        input: text,
+        response_format: 'mp3',
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
         },
-      });
+        responseType: 'stream',
+        timeout: 60000,
+      }
+    );
 
-      const writer = createWriteStream(path);
-      audioStream.pipe(writer);
+    const writer = fs.createWriteStream(outputPath);
+    response.data.pipe(writer);
 
+    return new Promise((resolve, reject) => {
       writer.on('finish', () => {
-        console.log(`✅ Voiceover saved at: ${outputPath}`);
+        console.log('✅ Saved TTS audio to:', outputPath);
         resolve(outputPath);
       });
-
-      writer.on('error', (err) => {
-        console.error('❌ Error writing file:', err.message);
-        reject(err);
+      writer.on('error', reject);
+    });
+  } catch (error) {
+    if (error.response) {
+      console.error('❌ OpenAI TTS API Error:', {
+        status: error.response.status,
+        data: error.response.data,
       });
-
-      audioStream.on('error', (err) => {
-        console.error('❌ Stream error from ElevenLabs:', err.message);
-        reject(err);
-      });
-
-    } catch (err) {
-      console.error('❌ ElevenLabs API Error:', err?.message || err);
-      reject(err);
+    } else {
+      console.error('❌ Request Failed:', error.message);
     }
-  });
+    throw error;
+  }
 };

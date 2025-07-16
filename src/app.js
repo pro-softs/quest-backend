@@ -9,6 +9,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import episodeRoutes from './routes/episodeRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
+import { generateVoice } from './utils/generateVoiceOvers.js';
 
 dotenv.config();
 
