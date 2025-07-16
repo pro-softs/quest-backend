@@ -8,6 +8,7 @@ import { generateVoice } from '../utils/generateVoiceOvers.js';
 import { cleanupEpisodeFolder, stitchEpisode } from '../utils/ffmpegPipeline.js';
 import { getJobFromQueue, updateJobInQueue } from '../utils/jobQueue.js';
 import { EpisodeService } from '../services/episodeService.js';
+import { exec } from 'child_process';
 
 const router = express.Router();
 
@@ -127,6 +128,24 @@ router.post("/compile-episodes", async (req, res) => {
     console.error('Compilation error:', err);
     res.status(500).json({ error: 'Video compilation failed' });
   }
+});
+
+router.get('/check-ffmpeg', (req, res) => {
+  exec('which ffmpeg', (error, stdout, stderr) => {
+    if (error || !stdout.trim()) {
+      return res.status(500).json({
+        found: false,
+        message: 'FFmpeg not found in system path.',
+        error: stderr || error?.message,
+      });
+    }
+
+    return res.json({
+      found: true,
+      path: stdout.trim(),
+      message: 'FFmpeg is available.',
+    });
+  });
 });
 
 export default router;
