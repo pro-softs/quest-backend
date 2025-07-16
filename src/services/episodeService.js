@@ -76,25 +76,43 @@ export class EpisodeService {
   }
 
   async generateStory(topic, age_group, genre) {
-    const prompt = `You are a creative storyteller for a Gen Z audience.
-Generate a fictional but educational story in the ${genre} style suitable for ${age_group}.
+    const prompt = `You are a world-class story designer creating short fictional but educational video series for a Gen Z audience (ages ${age_group}).
+
+Your goal is to turn the following topic into a highly engaging, imaginative, and emotionally resonant video story in the ${genre} style. 
+The story must both entertain and teach — blending real knowledge with fictional storytelling to spark curiosity and understanding.
+
 Topic: "${topic}"
-Structure it into 3-4 episodes, each with a title and 6-8 scenes.
-Each scene must include a description (visual setting) and dialogue (1–2 line exchange or narration).
-Return your response as structured JSON with this exact format:
+
+Format:
+- Structure the story into 3 to 4 episodes.
+- Each episode should have a title and 6 to 8 scenes.
+- Each scene must include:
+  - "description": a vivid visual description of the scene (setting, action, emotion)
+  - "dialogue": a short 1–2 line narration or character conversation driving the story
+
+Story guidelines:
+- Ensure continuity of characters, emotional tone, and narrative across all episodes and scenes.
+- Use age-appropriate language and themes for ages ${age_group}.
+- Infuse subtle educational insights (facts, historical context, scientific ideas) through storytelling, not as exposition dumps.
+- Keep the pacing cinematic: with tension buildup, twists, and resolution.
+- Make sure the story feels like an anime-style or cinematic adventure: dynamic, visual, and emotionally layered.
+
+Output:
+Return your response as structured JSON in this exact format:
 {
   "episodes": [
     {
-      "title": "Episode 1: [Your Title]",
+      "title": "Episode 1: [Title]",
       "scenes": [
         {
-          "description": "visual scene description",
-          "dialogue": "short 1-2 line narration or conversation"
+          "description": "Visual scene description",
+          "dialogue": "Narration or conversation"
         }
       ]
     }
   ]
-}`;
+}
+`;
 
     try {
       const response = await this.openai.generateText(prompt);
@@ -107,11 +125,14 @@ Return your response as structured JSON with this exact format:
   }
 
   async generateImagePrompt(description, genre, age_group) {
-    const prompt = `Generate a vivid AI art prompt.
-Age group: ${age_group}, Genre: ${genre}
+    const prompt = `Generate a vivid AI art prompt for an educational anime-style video scene from Quest, a Gen Z platform (audience age: ${age_group}) that turns topics into rich, cinematic stories.
+
 Scene: "${description}"
-Return:
-"A ${genre} style scene showing ${description}, with detailed background, lighting, character emotion, and cinematic composition."`;
+Genre Style: ${genre}
+
+Return only this string:
+"A ${genre} style anime scene showing ${description}, with expressive characters, cinematic framing, dynamic lighting, background detail, and emotional atmosphere."
+`;
 
     try {
       const response = await this.openai.generateText(prompt);
@@ -123,9 +144,16 @@ Return:
   }
 
   async generateVoiceoverScript(dialogue, age_group) {
-    const prompt = `Convert this dialogue into a narration voiceover line for a ${age_group}-age audience.
+    const prompt = `You are writing a short, emotionally engaging narration line for a cinematic anime-style scene from “Quest,” a storytelling platform for ages ${age_group}.
+
+Your goal is to convert the following **dialogue line** into a compelling **narration-style voiceover**. Make it flow naturally and feel like part of an exciting story (not like an explanation).
+
+Keep it short (1–2 lines), clear, emotional, and age-appropriate.
+
 Dialogue: "${dialogue}"
-Return a clear, emotionally engaging narration line.`;
+
+Return: a single narration line only.
+`;
 
     try {
       const response = await this.openai.generateText(prompt);
