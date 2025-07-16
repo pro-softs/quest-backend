@@ -47,7 +47,7 @@ export const generateVoice = async (text, path) => {
         reject(err);
       });
 
-    } catch (err: any) {
+    } catch (err) {
       console.error('❌ ElevenLabs API Error:', err?.message || err);
       reject(err);
     }
