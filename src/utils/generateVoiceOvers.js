@@ -1,67 +1,55 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
-import fs from 'fs-extra';
+import { ElevenLabsClient } from '@elevenlabs/elevenlabs-js';
+import { createWriteStream } from 'fs';
+import path from 'path';
+import { v4 as uuid } from 'uuid';
 
 dotenv.config();
 
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
-const ELEVENLABS_VOICE_ID = process.env.ELEVENLABS_VOICE_ID || 'Rachel';
+const ELEVENLABS_VOICE_ID = process.env.ELEVENLABS_VOICE_ID || 'JBFqnCBsd6RMkjVDRZzb'; // fallback default voice
 
-export async function generateVoice(text, outputPath) {
-  console.log(text);
-  try {
-    console.log('🎙️ Generating voiceover from ElevenLabs...');
+const elevenlabs = new ElevenLabsClient({ apiKey: ELEVENLABS_API_KEY });
 
-    const response = await axios.post(
-      `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}`,
-      {
+export const generateVoice = async (text, path) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      console.log('🎙️ Requesting voiceover from ElevenLabs...');
+
+      const audioStream = await elevenlabs.textToSpeech.convert(ELEVENLABS_VOICE_ID, {
+        modelId: 'eleven_multilingual_v2',
         text,
-        model_id: 'eleven_monolingual_v1',
-        voice_settings: {
-          stability: 0.6,
-          similarity_boost: 0.8,
+        outputFormat: 'mp3_44100_64',
+        voiceSettings: {
+          stability: 0.5,
+          similarityBoost: 0.5,
+          useSpeakerBoost: true,
+          speed: 1.0,
         },
-      },
-      {
-        headers: {
-          'xi-api-key': ELEVENLABS_API_KEY,
-          'Content-Type': 'application/json',
-        },
-        responseType: 'stream',
-      }
-    );
-
-    console.log(`🔊 Streaming audio to file: ${outputPath}`);
-    const writer = fs.createWriteStream(outputPath);
-    response.data.pipe(writer);
-
-    return new Promise((resolve, reject) => {
-      writer.on('finish', () => {
-        console.log('✅ Voiceover saved successfully.');
-        resolve();
       });
+
+      const writer = createWriteStream(path);
+      audioStream.pipe(writer);
+
+      writer.on('finish', () => {
+        console.log(`✅ Voiceover saved at: ${outputPath}`);
+        resolve(outputPath);
+      });
+
       writer.on('error', (err) => {
-        console.error('❌ Error writing audio file:', err);
+        console.error('❌ Error writing file:', err.message);
         reject(err);
       });
-    });
 
-  } catch (error) {
-    if (error.response) {
-      const errorText = Buffer.isBuffer(error.response.data)
-        ? error.response.data.toString()
-        : JSON.stringify(error.response.data, null, 2);
-
-      console.error('❌ ElevenLabs API error:', {
-        status: error.response.status,
-        message: errorText,
+      audioStream.on('error', (err) => {
+        console.error('❌ Stream error from ElevenLabs:', err.message);
+        reject(err);
       });
-    } else if (error.code === 'ECONNABORTED') {
-      console.error('❌ Timeout: ElevenLabs request took too long');
-    } else {
-      console.error('❌ Unexpected error in voiceover generation:', error.message);
-    }
 
-    throw new Error('Failed to generate voiceover');
-  }
-}
+    } catch (err: any) {
+      console.error('❌ ElevenLabs API Error:', err?.message || err);
+      reject(err);
+    }
+  });
+};
