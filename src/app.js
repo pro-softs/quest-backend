@@ -17,6 +17,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const OUTPUT_DIR = path.join(__dirname, '..', '..', 'videos');
 
 // Create jobs directory if it doesn't exist
 const jobsDir = path.join(__dirname, '..', 'jobs');
@@ -38,6 +39,7 @@ app.use(express.static('public'));
 
 // Routes
 app.use('/api', episodeRoutes);
+app.use('/videos', express.static(OUTPUT_DIR));
 
 // Health check endpoint
 app.get('/health', (req, res) => {

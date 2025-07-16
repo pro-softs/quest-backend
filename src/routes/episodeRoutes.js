@@ -117,7 +117,7 @@ router.post("/compile-episodes", async (req, res) => {
 
     for (let i = 0; i < episodes.length; i++) {
       const path = await stitchEpisode(episodes[i], i, requestId);
-      episodePaths.push(path);
+      episodePaths.push({ path: `https://quest-backend-production-f581.up.railway.app/videos/${path}`, title: episodes[i].title });
     }
 
     res.json({ status: 'done', requestId, video_urls: episodePaths });
