@@ -84,18 +84,20 @@ The story must both entertain and teach — blending real knowledge with fiction
 Topic: "${topic}"
 
 Format:
-- Structure the story into 3 to 4 episodes.
-- Each episode should have a title and 8 to 10 scenes.
+- Structure the story into **3 to 4 episodes** episodes.
+- Each episode must have a title and must have **8 to 10 scenes**.  
 - Each scene must include:
   - "description": a vivid visual description of the scene (setting, action, emotion)
   - "dialogue": a short 1–2 line narration or character conversation driving the story
 
 Story guidelines:
+- Return exactly **8 to 10 scenes per episode**. Do **not shorten** or merge scenes.
 - Ensure continuity of characters, emotional tone, and narrative across all episodes and scenes.
 - Use age-appropriate language and themes for ages ${age_group}.
 - Infuse subtle educational insights (facts, historical context, scientific ideas) through storytelling, not as exposition dumps.
 - Keep the pacing cinematic: with tension buildup, twists, and resolution.
 - Make sure the story feels like an anime-style or cinematic adventure: dynamic, visual, and emotionally layered.
+- Each scene should be unique and move the story forward.
 
 Output:
 Return your response as structured JSON in this exact format:
