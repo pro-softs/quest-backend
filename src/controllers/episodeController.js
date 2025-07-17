@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const generateEpisodes = async (req, res) => {
   try {
-    const { topic, age_group, genre } = req.body;
+    const { topic, age_group, genre, subject } = req.body;
     const requestId = uuidv4();
 
     console.log(`📝 Generating episodes for topic: "${topic}" (${genre}, ${age_group})`);
@@ -12,7 +12,7 @@ export const generateEpisodes = async (req, res) => {
     const episodeService = new EpisodeService();
     
     // Generate the story structure first
-    const storyStructure = await episodeService.generateStory(topic, age_group, genre);
+    const storyStructure = await episodeService.generateStory(topic, age_group, genre, subject);
 
     const episodes = storyStructure.episodes.map((episode, episodeIndex) => {      
       const processedScenes = episode.scenes.map((scene, sceneIndex) => {
