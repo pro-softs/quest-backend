@@ -13,44 +13,27 @@ export const generateEpisodes = async (req, res) => {
     
     // Generate the story structure first
     const storyStructure = await episodeService.generateStory(topic, age_group, genre);
-    
-    // Process each episode and its scenes
-    const episodes = await Promise.all(
-      storyStructure.episodes.map(async (episode, episodeIndex) => {
-        const episodeNumber = episodeIndex + 1;
-        
-        const processedScenes = await Promise.all(
-          episode.scenes.map(async (scene, sceneIndex) => {
-            const sceneId = episodeIndex * 10 + sceneIndex + 1;
-            const sceneNumber = sceneIndex + 1;
-            
-            // Generate image prompt, voiceover script, and image in parallel
-            const [imagePrompt, voiceoverScript] = await Promise.all([
-              episodeService.generateImagePrompt(scene.description, genre, age_group),
-              episodeService.generateVoiceoverScript(scene.dialogue, age_group),
-            ]);
 
-            return {
-              scene_id: sceneId,
-              description: scene.description,
-              dialogue: scene.dialogue,
-              image_prompt: imagePrompt,
-              voiceover_script: voiceoverScript,
-            };
-          })
-        );
-
+    const episodes = storyStructure.episodes.map((episode, episodeIndex) => {      
+      episode.scenes.map((scene, sceneIndex) => {
+        const sceneId = episodeIndex * 10 + sceneIndex + 1;            
+      
         return {
-          title: episode.title,
-          scenes: processedScenes
+          ...scene,
+          scene_id: sceneId,
         };
-      })
-    );
+      });
+
+      return {
+        title: episode.title,
+        scenes: processedScenes
+      };
+    });
 
     const response = {
-      status: "image_done",
+      status: "story_done",
       requestId,
-      episodes,
+      episodes: storyStructure.episodes,
     };
 
     // Save job to queue for video rendering simulation

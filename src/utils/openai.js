@@ -20,44 +20,11 @@ export class OpenAIService {
     }
   }
 
-  async generateImage(prompt) {
-    let attempt = 0;
+  async generateImages(prompts) {
+    const dalle = new DalleImageGenerator(this.client);
 
-    while (attempt < MAX_RETRIES) {
-      try {
-        if (!this.apiKey) {
-          console.log('🔄 Using fallback image URL (no API key)');
-          return null;
-        }
-
-        const response = await this.client.images.generate({
-          model: 'dall-e-3',
-          prompt,
-          n: 1,
-          size: '1024x1024',
-          response_format: 'b64_json',
-        });
-
-        const imageData = response.data?.[0]?.b64_json;
-        if (!imageData) {
-          throw new Error('No image data returned from OpenAI');
-        }
-
-        return Buffer.from(imageData, 'base64');
-      } catch (err) {
-        const isRateLimit = err.status === 429 || err.code === 'rate_limit_exceeded';
-        const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
-
-        console.warn(`❌ Attempt ${attempt + 1} failed${isRateLimit ? ' (Rate Limit)' : ''}: ${err.message}`);
-        if (attempt >= MAX_RETRIES - 1 || !isRateLimit) {
-          throw err;
-        }
-
-        console.log(`⏳ Waiting ${Math.round(delay)}ms before retry...`);
-        await sleep(delay);
-        attempt++;
-      }
-    }
+    const results = await dalle.generateImagesInParallel(prompts);
+    return results;
   }
 
   async generateText(prompt, systemPrompt, maxTokens = 4000) {

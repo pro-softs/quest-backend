@@ -7,6 +7,15 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const imageStylesByGenre = {
+  anime: "anime style, cinematic lighting, Studio Ghibli look, vivid color palette, 4K detail",
+  fantasy: "epic fantasy concept art, dramatic lighting, painterly textures, high detail",
+  cyberpunk: "cyberpunk style, neon lights, dark shadows, futuristic city, cinematic composition",
+  pixel: "pixel art, retro 16-bit game style, vibrant colors, side-scroller layout",
+  storybook: "watercolor storybook illustration, soft textures, hand-drawn feel, gentle palette",
+  noir: "cinematic noir, heavy contrast, rain-soaked streets, moody lighting, muted colors"
+}
+
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -30,9 +39,21 @@ export class EpisodeService {
     }
   }
 
-  async generateImageFromPrompt(prompt) {
-    await delay(1200); // 1.2 sec delay between image calls
-    return await this.openai.generateImage(prompt);
+  async generateImageFromPrompt(prompts, requestId) {
+    const results = await this.openai.generateImages(prompts);
+
+    // Save to disk or DB
+    for (const result of results) {
+      if (result.imageBuffer) {
+        const sceneNumber = result.scene;
+        const episodeNumber = result.episode;
+
+        const imageKey = `${requestId}/ep${episodeNumber}/scene${sceneNumber}.webp`;
+        const imagePath = path.join(this.imagesDir, imageKey);
+
+        fs.writeFileSync(imagePath, result.imageBuffer);
+      }
+    }
   }
 
   async saveImageLocally(imageBuffer, filePath) {
@@ -82,50 +103,75 @@ export class EpisodeService {
     }
   }
 
-  async generateStory(topic, age_group, genre) {
-    const prompt = `You are a world-class educational story designer creating short fictional video series for Gen Z learners (ages ${age_group}) in the style of **{${genre}}*.
+  async generateStory(topic, age_group, genre, subject) {
+    const finalImageStyle = imageStylesByGenre[genre] || "cinematic, vivid, emotionally rich";
+
+    const prompt = `You are a world-class educational story designer creating short fictional video series for Gen Z learners (ages ${age_group}) in the style of **${genre}**, focused on the subject: **${subject}**.
 
 Your mission is to transform the following topic into a **visually rich, emotionally engaging, and intellectually clear** story that teaches the core concept while entertaining.
 
+---
+
 **Topic:** "${topic}"
 
-**Goal:** 
-Teach the core idea or concept clearly through story. 
-Use fictional characters and drama, but **the audience must leave with a real understanding** of the topic.
+---
 
-**Format:**
-- Structure the story into **3 to 4 short episodes**.
-- Each episode must have:
-  - A creative title
-  - Exactly **4 to 5 scenes**
-- Each scene must include:
-  - "description": a vivid visual description (setting, action, emotion)
-  - "dialogue": a short 1–2 line narration or character dialogue moving the story forward and subtly teaching the concept.
+**Goal:**  
+Teach the core idea or concept clearly through story.  
+Use fictional characters, cinematic visuals, and emotional narration — the audience must leave with a real understanding of the topic.
+
+---
+
+**Visual Style:**  
+Use this global image style across all scenes for consistency:
+
+> "${finalImageStyle}"  
+
+Every image prompt must include this style implicitly or explicitly.
+
+---
+
+**Format:**  
+Structure the story into **2 short episodes**.  
+Each episode must include:
+- A creative title
+- Exactly **1 scenes**
+
+Each scene must include:
+- "description": A vivid visual description (setting, action, emotion)
+- "voiceover": A short 1–3 line narration that explains what’s happening and helps teach the concept (NO character dialogue)
+- "image_prompt": A rich prompt that can be used by DALL·E or similar models, combining the scene’s content with the global image style
+
+---
 
 **Guidelines:**
-- Use cinematic pacing and emotional tension, but always return to the **concept you're teaching**.
-- Use fictional or anime-style characters if needed, but **don't invent fantasy history** unless it directly aids understanding.
-- Do **not rely on mythology or historical reenactments** unless the topic demands it.
-- Infuse real educational insights into the story naturally. (Use analogies, visuals, dialogue-driven explanation, metaphors, examples.)
+- Use cinematic pacing and emotional tension, but always return to the **core concept you're teaching**
+- No dialogues — use only narrator-style voiceovers that explain visually what's happening and convey understanding
+- Use fictional or anime-style characters if helpful, but **don’t invent fantasy history or mythology** unless needed to explain the concept
+- Infuse real educational insights into the story naturally (use analogies, metaphors, visual examples)
 - Every scene should:
-  - Be unique and move the story forward
+  - Be visually unique and move the story forward
   - Reinforce or build toward **clear understanding** of the topic
-- Keep language age-appropriate, emotionally resonant, and curious.
+- Keep language age-appropriate, emotionally resonant, and curiosity-driven
+- Ensure **image prompts** are:
+  - Visually descriptive and coherent
+  - Consistent with the global image style
+  - Include characters, setting, subject elements, and emotions
+  - Add camera direction (e.g. close-up, wide shot) if helpful
 
-**Examples of acceptable educational integration:**
-- A character drawing a triangle in the sand to demonstrate the theorem.
-- A challenge involving measuring space or distance that leads to visual use of the Pythagorean formula.
-- A scene where someone explains a concept emotionally: "If we know these two paths, we can always find the diagonal... it’s like solving for the truth.”
+---
 
 **Output (Strict JSON format):**
 {
+  "image_style": "anime style, cinematic lighting, ultra-detailed, vibrant color palette, dramatic angles, 4K composition",
   "episodes": [
     {
       "title": "Episode 1: [Your title]",
       "scenes": [
         {
-          "description": "A clear, vivid scene",
-          "dialogue": "Short narration or dialogue"
+          "description": "A vivid visual of what's happening",
+          "voiceover": "Narration for this scene",
+          "image_prompt": "Prompt for DALL·E or similar model to generate this scene, using the global image style"
         }
         ...
       ]

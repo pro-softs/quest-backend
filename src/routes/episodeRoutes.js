@@ -32,31 +32,20 @@ router.post('/generate-scenes', async (req, res) => {
   const episodes = job.episodes;
 
   try {
-    for (let epIndex = 0; epIndex < episodes.length; epIndex++) {
-      const ep = episodes[epIndex];
-      const epDir = path.join(TMP_DIR, requestId, `ep${epIndex + 1}`);
-      await fs.ensureDir(epDir);
-  
-      for (let scIndex = 0; scIndex < ep.scenes.length; scIndex++) {
-        const scene = ep.scenes[scIndex];
-  
-        const blob = await episodeService.generateImageFromPrompt(scene.description);
-  
-        const sceneNumber = scene.scene_id || scIndex + 1;
-        const episodeNumber = epIndex + 1;
-        const imageKey = `${requestId}/ep${episodeNumber}/scene${sceneNumber}.webp`;
-        const imagePath = path.join(TMP_DIR, imageKey);
-  
-        await episodeService.saveImageLocally(blob, imagePath);
-  
-        // ⬅️ Save image path back to scene
-        scene.image_url = `/${imageKey}`;
-      }
-    }
+    const prompts = [];
+
+    episodes.forEach((episode, episodeIndex) => {
+      episode.scenes.forEach((scene) => {
+        prompts.push({
+          episode: episodeIndex + 1,
+          scene: scene.scene_id,
+          prompt: scene.image_prompt,
+        });
+      });
+    });
     
-    // ⬅️ Save updated episodes back into job
-    job.episodes = episodes;
-    await updateJobInQueue(requestId, job); // This is assumed to persist updated job state
+
+    await episodeService.generateImageFromPrompt(prompts, requestId);
 
     res.json({ status: 'done_images', requestId });
   } catch (err) {
@@ -88,7 +77,7 @@ router.post('/generate-voiceovers', async (req, res) => {
         const audioKey = `${requestId}/ep${epIndex + 1}/scene${sceneNumber}.mp3`;
         const voicePath = path.join(TMP_DIR, audioKey);
 
-        await generateVoice(scene.voiceover_script, voicePath);
+        await generateVoice(scene.voiceover, voicePath);
         scene.voice_url = `/${audioKey}`;
       }
     }
