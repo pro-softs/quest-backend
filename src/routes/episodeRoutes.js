@@ -118,7 +118,7 @@ router.post("/compile-episodes", async (req, res) => {
     const episodePaths = [];
 
     for (let i = 0; i < episodes.length; i++) {
-      const {finalVideoPath, name} = await stitchEpisode(episodes[i], i, requestId);
+      const { finalVideoPath, name } = await stitchEpisode(episodes[i], i, requestId);
       const url = await uploadVideo(finalVideoPath, name);
 
       episodePaths.push({ path: url, title: episodes[i].title });

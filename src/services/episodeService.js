@@ -143,7 +143,7 @@ Target audience age: "${age_group}"
 Make the prompt rich in visuals, lighting, background, and emotion.`;
 
     try {
-      const response = await this.openai.generateText(prompt, systemPromp = systemPromp);
+      const response = await this.openai.generateText(prompt, systemPromp);
       return response.replace(/"/g, '').trim();
     } catch (error) {
       console.error('Error generating image prompt:', error);

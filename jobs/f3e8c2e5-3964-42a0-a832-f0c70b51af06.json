@@ -1,0 +1,24 @@
+{
+  "topic": "Know more about dreams",
+  "age_group": "16-18",
+  "genre": "cartoon",
+  "episodes": [
+    {
+      "title": "Episode 1: Dreamland Discovery",
+      "scenes": [
+        {
+          "scene_id": 1,
+          "description": "As the sun sets, Luna, a curious teenager, drifts off to sleep. She finds herself in a vibrant dreamland filled with floating islands and talking animals. A wise owl approaches her, guiding her towards a mysterious glowing tree.",
+          "dialogue": "Owl: Welcome to the Dreamland, Luna. The tree of knowledge awaits you.",
+          "image_prompt": "In a dreamy anime world, under the warm hues of a setting sun, Luna, a curious teen, falls into a deep slumber. She awakens in a fantastical dream realm, surrounded by enchanting floating islands and whimsical talking animals. Amidst this ethereal landscape, a majestic owl, emanating wisdom, elegantly glides towards Luna, leading her with grace and mystique towards a captivating, luminous tree shrouded in mystery.",
+          "voiceover_script": "As Luna stepped into the enchanting Dreamland, Owl's words echoed in her mind: The tree of knowledge awaits you.",
+          "voice_url": "/f3e8c2e5-3964-42a0-a832-f0c70b51af06/ep1/scene1.mp3",
+          "image_url": "/f3e8c2e5-3964-42a0-a832-f0c70b51af06/ep1/scene1.webp"
+        }
+      ]
+    }
+  ],
+  "requestId": "f3e8c2e5-3964-42a0-a832-f0c70b51af06",
+  "timestamp": "2025-07-17T06:48:05.537Z",
+  "status": "queued"
+}
