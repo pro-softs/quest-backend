@@ -84,14 +84,14 @@ The story must both entertain and teach — blending real knowledge with fiction
 Topic: "${topic}"
 
 Format:
-- Structure the story into **1** episodes.
-- Each episode must have a title and must have **1 scenes**.  
+- Structure the story into **3 to 4 episodes** episodes.
+- Each episode must have a title and must have **8 to 10 scenes**.  
 - Each scene must include:
   - "description": a vivid visual description of the scene (setting, action, emotion)
   - "dialogue": a short 1–2 line narration or character conversation driving the story
 
 Story guidelines:
-- Return exactly **1 scenes per episode**. Do **not shorten** or merge scenes.
+- Return exactly **8 to 10 scenes per episode**. Do **not shorten** or merge scenes.
 - Ensure continuity of characters, emotional tone, and narrative across all episodes and scenes.
 - Use age-appropriate language and themes for ages ${age_group}.
 - Infuse subtle educational insights (facts, historical context, scientific ideas) through storytelling, not as exposition dumps.
