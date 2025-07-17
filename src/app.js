@@ -42,9 +42,11 @@ app.use(express.static('public'));
 app.use('/api', episodeRoutes);
 
 app.get('/stream/:requestId', (req, res) => {
-  const filePath = OUTPUT_DIR + req.params.requestId;
+  const filePath = OUTPUT_DIR + '/' + req.params.requestId;
   const filename = req.query.filename;
   const file = filePath + `/${filename}`;
+
+  console.log(file, 'sds');
 
   fs.stat(file, (err, stats) => {
     if (err) {
