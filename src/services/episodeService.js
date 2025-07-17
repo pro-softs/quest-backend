@@ -76,21 +76,21 @@ export class EpisodeService {
   }
 
   async generateStory(topic, age_group, genre) {
-    const prompt = `You are a world-class educational story designer creating short fictional video series for Gen Z learners (ages {{age_group}}).
+    const prompt = `You are a world-class educational story designer creating short fictional video series for Gen Z learners (ages ${age_group}) in the style of **{${genre}}*.
 
 Your mission is to transform the following topic into a **visually rich, emotionally engaging, and intellectually clear** story that teaches the core concept while entertaining.
 
-**Topic:** "{{topic}}"
+**Topic:** "${topic}"
 
 **Goal:** 
 Teach the core idea or concept clearly through story. 
 Use fictional characters and drama, but **the audience must leave with a real understanding** of the topic.
 
 **Format:**
-- Structure the story into **2 to 3 short episodes**.
+- Structure the story into **3 to 4 short episodes**.
 - Each episode must have:
   - A creative title
-  - Exactly **3 to 4 scenes**
+  - Exactly **4 to 5 scenes**
 - Each scene must include:
   - "description": a vivid visual description (setting, action, emotion)
   - "dialogue": a short 1–2 line narration or character dialogue moving the story forward and subtly teaching the concept.
@@ -110,7 +110,7 @@ Use fictional characters and drama, but **the audience must leave with a real un
 - A challenge involving measuring space or distance that leads to visual use of the Pythagorean formula.
 - A scene where someone explains a concept emotionally: "If we know these two paths, we can always find the diagonal... it’s like solving for the truth.”
 
-**Return your response as structured JSON in this exact format:**
+**Output (Strict JSON format):**
 {
   "episodes": [
     {

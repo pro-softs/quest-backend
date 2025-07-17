@@ -68,7 +68,7 @@ export class OpenAIService {
 
     try {
       const chatResponse = await this.client.chat.completions.create({
-        model: 'gpt-3.5-turbo',
+        model: "gpt-4.1-mini",
         messages: systemPrompt ? [{ role: 'system', content: systemPrompt }, { role: 'user', content: prompt }] : [{ role: 'user', content: prompt }],
         max_tokens: maxTokens,
         temperature: 0.7,
