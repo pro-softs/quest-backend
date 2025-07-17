@@ -10,6 +10,13 @@ const __dirname = path.dirname(__filename);
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+function cleanOpenAIResponse(raw) {
+  return raw
+    .replace(/```json\s*/i, '')  // Remove starting ```json (case-insensitive)
+    .replace(/```$/, '')         // Remove ending triple backticks if any
+    .trim();                     // Remove extra whitespace
+}
 export class EpisodeService {
   constructor() {
     this.openai = new OpenAIService();
@@ -131,7 +138,7 @@ Use fictional characters and drama, but **the audience must leave with a real un
     try {
       const response = await this.openai.generateText(prompt);
       console.log(response, 'response');
-      return JSON.parse(response);
+      return JSON.parse(cleanOpenAIResponse(response));
     } catch (error) {
       console.error('Error generating story:', error);
        throw error;
