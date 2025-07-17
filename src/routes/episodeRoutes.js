@@ -9,6 +9,7 @@ import { cleanupEpisodeFolder, stitchEpisode } from '../utils/ffmpegPipeline.js'
 import { getJobFromQueue, updateJobInQueue } from '../utils/jobQueue.js';
 import { EpisodeService } from '../services/episodeService.js';
 import { exec } from 'child_process';
+import { uploadVideo } from '../utils/uploadVideo.js';
 
 const router = express.Router();
 
@@ -117,8 +118,10 @@ router.post("/compile-episodes", async (req, res) => {
     const episodePaths = [];
 
     for (let i = 0; i < episodes.length; i++) {
-      const episodeName = await stitchEpisode(episodes[i], i, requestId);
-      episodePaths.push({ path: `https://quest-backend-production-f581.up.railway.app/stream/${requestId}?filename=${episodeName}`, title: episodes[i].title });
+      const {finalVideoPath, name} = await stitchEpisode(episodes[i], i, requestId);
+      const url = await uploadVideo(finalVideoPath, name);
+
+      episodePaths.push({ path: url, title: episodes[i].title });
     }
 
     res.json({ status: 'done', requestId, video_urls: episodePaths });

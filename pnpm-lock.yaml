@@ -11,6 +11,9 @@ importers:
       '@elevenlabs/elevenlabs-js':
         specifier: ^2.6.0
         version: 2.6.0
+      '@uploadcare/upload-client':
+        specifier: ^6.17.0
+        version: 6.17.0
       axios:
         specifier: ^1.10.0
         version: 1.10.0
@@ -43,7 +46,7 @@ importers:
         version: 1.10.0
       openai:
         specifier: ^5.10.0
-        version: 5.10.0
+        version: 5.10.0(ws@8.18.3)
       serverless-http:
         specifier: ^3.2.0
         version: 3.2.0
@@ -75,6 +78,10 @@ packages:
 
   '@sideway/pinpoint@2.0.0':
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
+
+  '@uploadcare/upload-client@6.17.0':
+    resolution: {integrity: sha512-ir6xo6HLy3TVn4lVJ+9fOOcq8vvgMmcXoSP/mM+l1CTKKJmd0hzXqNkZ1CYyz7PiRhLPUC6fprmUuA7rnVC87g==}
+    engines: {node: '>=16'}
 
   accepts@1.3.8:
     resolution: {integrity: sha512-PYAthTa2m2VKxuvSD3DPC/Gy+U+sOA1LAuT8mkmRuvw+NACSaeXEQ+NHcVF7rONl6qcaxV3Uuemwawk+7+SJLw==}
@@ -607,6 +614,18 @@ packages:
     resolution: {integrity: sha512-HxJdYWq1MTIQbJ3nw0cqssHoTNU267KlrDuGZ1WYlxDStUtKUhOaJmh112/TZmHxxUfuJqPXSOm7tDyas0OSIQ==}
     hasBin: true
 
+  ws@8.18.3:
+    resolution: {integrity: sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
 snapshots:
 
   '@elevenlabs/elevenlabs-js@2.6.0':
@@ -629,6 +648,14 @@ snapshots:
   '@sideway/formula@3.0.1': {}
 
   '@sideway/pinpoint@2.0.0': {}
+
+  '@uploadcare/upload-client@6.17.0':
+    dependencies:
+      form-data: 4.0.3
+      ws: 8.18.3
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
 
   accepts@1.3.8:
     dependencies:
@@ -1021,7 +1048,9 @@ snapshots:
 
   on-headers@1.0.2: {}
 
-  openai@5.10.0: {}
+  openai@5.10.0(ws@8.18.3):
+    optionalDependencies:
+      ws: 8.18.3
 
   parseurl@1.3.3: {}
 
@@ -1169,3 +1198,5 @@ snapshots:
   which@1.3.1:
     dependencies:
       isexe: 2.0.0
+
+  ws@8.18.3: {}

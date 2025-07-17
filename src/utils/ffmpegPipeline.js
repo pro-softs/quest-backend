@@ -118,5 +118,5 @@ export async function stitchEpisode(episode, epIndex, requestId) {
       });
   });
 
-  return episodeName;
+  return { finalVideoPath, name: `${requestId}_${episodeName}`};
 }
