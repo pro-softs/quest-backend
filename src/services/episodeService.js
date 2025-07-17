@@ -76,43 +76,54 @@ export class EpisodeService {
   }
 
   async generateStory(topic, age_group, genre) {
-    const prompt = `You are a world-class story designer creating short fictional but educational video series for a Gen Z audience (ages ${age_group}).
+    const prompt = `You are a world-class educational story designer creating short fictional video series for Gen Z learners (ages {{age_group}}).
 
-Your goal is to turn the following topic into a highly engaging, imaginative, and emotionally resonant video story in the ${genre} style. 
-The story must both entertain and teach — blending real knowledge with fictional storytelling to spark curiosity and understanding.
+Your mission is to transform the following topic into a **visually rich, emotionally engaging, and intellectually clear** story that teaches the core concept while entertaining.
 
-Topic: "${topic}"
+**Topic:** "{{topic}}"
 
-Format:
-- Structure the story into **3 to 4 episodes** episodes.
-- Each episode must have a title and must have **5 to 6 scenes**.  
+**Goal:** 
+Teach the core idea or concept clearly through story. 
+Use fictional characters and drama, but **the audience must leave with a real understanding** of the topic.
+
+**Format:**
+- Structure the story into **2 to 3 short episodes**.
+- Each episode must have:
+  - A creative title
+  - Exactly **3 to 4 scenes**
 - Each scene must include:
-  - "description": a vivid visual description of the scene (setting, action, emotion)
-  - "dialogue": a short 1–2 line narration or character conversation driving the story
+  - "description": a vivid visual description (setting, action, emotion)
+  - "dialogue": a short 1–2 line narration or character dialogue moving the story forward and subtly teaching the concept.
 
-Story guidelines:
-- Minimum 3 episodes are needed.
-- Return exactly **5 to 6 scenes per episode**. Do **not shorten** or merge scenes.
-- Ensure continuity of characters, emotional tone, and narrative across all episodes and scenes.
-- Use age-appropriate language and themes for ages ${age_group}.
-- Infuse subtle educational insights (facts, historical context, scientific ideas) through storytelling, not as exposition dumps.
-- Keep the pacing cinematic: with tension buildup, twists, and resolution.
-- Make sure the story feels like an anime-style or cinematic adventure: dynamic, visual, and emotionally layered.
-- Each scene should be unique and move the story forward.
+**Guidelines:**
+- Use cinematic pacing and emotional tension, but always return to the **concept you're teaching**.
+- Use fictional or anime-style characters if needed, but **don't invent fantasy history** unless it directly aids understanding.
+- Do **not rely on mythology or historical reenactments** unless the topic demands it.
+- Infuse real educational insights into the story naturally. (Use analogies, visuals, dialogue-driven explanation, metaphors, examples.)
+- Every scene should:
+  - Be unique and move the story forward
+  - Reinforce or build toward **clear understanding** of the topic
+- Keep language age-appropriate, emotionally resonant, and curious.
 
-Output:
-Return your response as structured JSON in this exact format:
+**Examples of acceptable educational integration:**
+- A character drawing a triangle in the sand to demonstrate the theorem.
+- A challenge involving measuring space or distance that leads to visual use of the Pythagorean formula.
+- A scene where someone explains a concept emotionally: "If we know these two paths, we can always find the diagonal... it’s like solving for the truth.”
+
+**Return your response as structured JSON in this exact format:**
 {
   "episodes": [
     {
-      "title": "Episode 1: [Title]",
+      "title": "Episode 1: [Your title]",
       "scenes": [
         {
-          "description": "Visual scene description",
-          "dialogue": "Narration or conversation"
+          "description": "A clear, vivid scene",
+          "dialogue": "Short narration or dialogue"
         }
+        ...
       ]
     }
+    ...
   ]
 }
 `;
