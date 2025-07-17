@@ -5,11 +5,11 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs-extra';
 import { generateVoice } from '../utils/generateVoiceOvers.js';
-import { cleanupEpisodeFolder, stitchEpisode } from '../utils/ffmpegPipeline.js';
+import { buildAllEpisodes, createConcatListFilesForAllEpisodes, createScenes } from '../utils/ffmpegPipeline.js';
 import { getJobFromQueue, updateJobInQueue } from '../utils/jobQueue.js';
 import { EpisodeService } from '../services/episodeService.js';
 import { exec } from 'child_process';
-import { uploadVideo } from '../utils/uploadVideo.js';
+import { uploadAllEpisodes } from '../utils/uploadVideo.js';
 
 const router = express.Router();
 
@@ -104,16 +104,12 @@ router.post("/compile-episodes", async (req, res) => {
     let job = await getJobFromQueue(requestId);
     const episodes = job.episodes;
     
-    const episodePaths = [];
+    await createScenes(episodes, requestId);
+    const concatListPaths = await createConcatListFilesForAllEpisodes(episodes, requestId);
+    const episodePaths = await buildAllEpisodes(concatListPaths, requestId);
+    const urls = await uploadAllEpisodes(episodePaths);
 
-    for (let i = 0; i < episodes.length; i++) {
-      const { finalVideoPath, name } = await stitchEpisode(episodes[i], i, requestId);
-      const url = await uploadVideo(finalVideoPath, name);
-
-      episodePaths.push({ path: url, title: episodes[i].title });
-    }
-
-    res.json({ status: 'done', requestId, video_urls: episodePaths });
+    res.json({ status: 'done', requestId, video_urls: urls });
 
     cleanupEpisodeFolder(requestId);
   } catch (err) {

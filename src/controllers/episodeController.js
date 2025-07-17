@@ -15,7 +15,7 @@ export const generateEpisodes = async (req, res) => {
     const storyStructure = await episodeService.generateStory(topic, age_group, genre);
 
     const episodes = storyStructure.episodes.map((episode, episodeIndex) => {      
-      episode.scenes.map((scene, sceneIndex) => {
+      const processedScenes = episode.scenes.map((scene, sceneIndex) => {
         const sceneId = episodeIndex * 10 + sceneIndex + 1;            
       
         return {

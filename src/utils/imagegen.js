@@ -1,6 +1,6 @@
 const MAX_RETRIES = 5;
 
-class DalleImageGenerator {
+export class DalleImageGenerator {
   constructor(client) {
     this.client = client;
   }

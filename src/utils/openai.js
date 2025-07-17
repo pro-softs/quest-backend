@@ -1,5 +1,6 @@
 import { OpenAI } from 'openai';
 import dotenv from 'dotenv';
+import { DalleImageGenerator } from './imagegen.js';
 
 dotenv.config();
 

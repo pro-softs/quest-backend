@@ -8,6 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const imageStylesByGenre = {
+  cartoon: 'Clean, colorful, expressive; like early Disney films.',
   anime: "anime style, cinematic lighting, Studio Ghibli look, vivid color palette, 4K detail",
   fantasy: "epic fantasy concept art, dramatic lighting, painterly textures, high detail",
   cyberpunk: "cyberpunk style, neon lights, dark shadows, futuristic city, cinematic composition",
@@ -132,10 +133,10 @@ Every image prompt must include this style implicitly or explicitly.
 ---
 
 **Format:**  
-Structure the story into **2 short episodes**.  
+Structure the story into **3 to 4 short episodes**.  
 Each episode must include:
 - A creative title
-- Exactly **1 scenes**
+- Exactly **7 to 10 scenes**
 
 Each scene must include:
 - "description": A vivid visual description (setting, action, emotion)

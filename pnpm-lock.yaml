@@ -26,6 +26,9 @@ importers:
       express:
         specifier: ^4.18.2
         version: 4.21.2
+      ffprobe-static:
+        specifier: ^3.1.0
+        version: 3.1.0
       fluent-ffmpeg:
         specifier: ^2.1.3
         version: 2.1.3
@@ -47,6 +50,9 @@ importers:
       openai:
         specifier: ^5.10.0
         version: 5.10.0(ws@8.18.3)
+      p-limit:
+        specifier: ^6.2.0
+        version: 6.2.0
       serverless-http:
         specifier: ^3.2.0
         version: 3.2.0
@@ -244,6 +250,9 @@ packages:
   express@4.21.2:
     resolution: {integrity: sha512-28HqgMZAmih1Czt9ny7qr6ek2qddF4FclbMzwhCREB6OFfH+rXAnuNCwo1/wFvrtbgsQDb4kSbX9de9lFbrXnA==}
     engines: {node: '>= 0.10.0'}
+
+  ffprobe-static@3.1.0:
+    resolution: {integrity: sha512-Dvpa9uhVMOYivhHKWLGDoa512J751qN1WZAIO+Xw4L/mrUSPxS4DApzSUDbCFE/LUq2+xYnznEahTd63AqBSpA==}
 
   fill-range@7.1.1:
     resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
@@ -468,6 +477,10 @@ packages:
       zod:
         optional: true
 
+  p-limit@6.2.0:
+    resolution: {integrity: sha512-kuUqqHNUqoIWp/c467RI4X6mmyuojY5jGutNU0wVTmEOOfcuwLqyMVoAi9MKi2Ak+5i9+nhmrK4ufZE8069kHA==}
+    engines: {node: '>=18'}
+
   parseurl@1.3.3:
     resolution: {integrity: sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==}
     engines: {node: '>= 0.8'}
@@ -625,6 +638,10 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
+
+  yocto-queue@1.2.1:
+    resolution: {integrity: sha512-AyeEbWOu/TAXdxlV9wmGcR0+yh2j3vYPGOECcIj2S7MkrLyC7ne+oye2BKTItt0ii2PHk4cDy+95+LshzbXnGg==}
+    engines: {node: '>=12.20'}
 
 snapshots:
 
@@ -847,6 +864,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  ffprobe-static@3.1.0: {}
+
   fill-range@7.1.1:
     dependencies:
       to-regex-range: 5.0.1
@@ -1052,6 +1071,10 @@ snapshots:
     optionalDependencies:
       ws: 8.18.3
 
+  p-limit@6.2.0:
+    dependencies:
+      yocto-queue: 1.2.1
+
   parseurl@1.3.3: {}
 
   path-to-regexp@0.1.12: {}
@@ -1200,3 +1223,5 @@ snapshots:
       isexe: 2.0.0
 
   ws@8.18.3: {}
+
+  yocto-queue@1.2.1: {}
