@@ -118,11 +118,11 @@ Return your response as structured JSON in this exact format:
 
     try {
       const response = await this.openai.generateText(prompt);
+      console.log(response, 'response');
       return JSON.parse(response);
     } catch (error) {
       console.error('Error generating story:', error);
-      // Fallback story structure
-      return this.getFallbackStory(topic, age_group, genre);
+       throw error;
     }
   }
 

@@ -63,7 +63,7 @@ export class OpenAIService {
   async generateText(prompt, systemPrompt, maxTokens = 1000) {
     if (!this.apiKey) {
       console.log('🔄 Using fallback response (no API key)');
-      return this.getFallbackResponse(prompt);
+      return null;
     }
 
     try {
