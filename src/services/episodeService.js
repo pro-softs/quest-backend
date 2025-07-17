@@ -125,17 +125,23 @@ Return your response as structured JSON in this exact format:
   }
 
   async generateImagePrompt(description, genre, age_group) {
-    const prompt = `Generate a vivid AI art prompt for an educational anime-style video scene from Quest, a Gen Z platform (audience age: ${age_group}) that turns topics into rich, cinematic stories.
+    const systemPromp = `You are a helpful assistant that creates safe and creative anime-style scene prompts for AI image generation (e.g. DALL·E). Your job is to take a scene description from an educational video and turn it into a vivid, emotionally resonant, and safe visual prompt suitable for AI image generation.
+
+Always make the scene feel cinematic, inspiring, and Gen Z-friendly. Avoid unsafe, violent, or graphic interpretations.
+
+Output only the prompt as a single string, no explanations.
+`
+
+    const prompt = `Generate a vivid anime-style scene prompt for the following educational video scene.
 
 Scene: "${description}"
-Genre Style: ${genre}
+Genre: "${genre}"
+Target audience age: "${age_group}"
 
-Return only this string:
-"A ${genre} style anime scene showing ${description}, with expressive characters, cinematic framing, dynamic lighting, background detail, and emotional atmosphere."
-`;
+Make the prompt rich in visuals, lighting, background, and emotion.`;
 
     try {
-      const response = await this.openai.generateText(prompt);
+      const response = await this.openai.generateText(prompt, systemPromp = systemPromp);
       return response.replace(/"/g, '').trim();
     } catch (error) {
       console.error('Error generating image prompt:', error);

@@ -60,7 +60,7 @@ export class OpenAIService {
     }
   }
 
-  async generateText(prompt, maxTokens = 1000) {
+  async generateText(prompt, systemPrompt, maxTokens = 1000) {
     if (!this.apiKey) {
       console.log('🔄 Using fallback response (no API key)');
       return this.getFallbackResponse(prompt);
@@ -69,7 +69,7 @@ export class OpenAIService {
     try {
       const chatResponse = await this.client.chat.completions.create({
         model: 'gpt-3.5-turbo',
-        messages: [{ role: 'user', content: prompt }],
+        messages: systemPrompt ? [{ role: 'system', content: systemPrompt }, { role: 'user', content: prompt }] : [{ role: 'user', content: prompt }],
         max_tokens: maxTokens,
         temperature: 0.7,
       });
@@ -78,6 +78,17 @@ export class OpenAIService {
     } catch (error) {
       console.error('OpenAI API Error:', error);
       return this.getFallbackResponse(prompt);
+    }
+  }
+
+  async generateModeration(description) {
+    try {
+      const moderationRes = await this.client.moderations.create({ input: description });
+      const results = moderationRes.data.results[0];
+      return results;
+    } catch (error) {
+      console.error('OpenAI Moderaion Error:', error);
+      return null;
     }
   }
 
