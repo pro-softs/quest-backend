@@ -92,7 +92,8 @@ export async function stitchEpisode(episode, epIndex, requestId) {
     sceneVideoPaths.map(p => `file '${p}'`).join('\n')
   );
 
-  const finalVideoPath = path.join(outputDir, `episode${epIndex + 1}.mp4`);
+  const episodeName = `episode${epIndex + 1}.mp4`;
+  const finalVideoPath = path.join(outputDir, episodeName);
 
   // Merge all scene videos into one
   await new Promise((resolve, reject) => {
@@ -117,5 +118,5 @@ export async function stitchEpisode(episode, epIndex, requestId) {
       });
   });
 
-  return finalVideoPath;
+  return episodeName;
 }

@@ -41,10 +41,12 @@ app.use(express.static('public'));
 // Routes
 app.use('/api', episodeRoutes);
 
-app.get('/stream/:filename', (req, res) => {
-  const filePath = OUTPUT_DIR + req.params.filename;
+app.get('/stream/:requestId', (req, res) => {
+  const filePath = OUTPUT_DIR + req.params.requestId;
+  const filename = req.query.filename;
+  const file = filePath + `/${filename}`;
 
-  fs.stat(filePath, (err, stats) => {
+  fs.stat(file, (err, stats) => {
     if (err) {
       return res.sendStatus(404);
     }
@@ -69,7 +71,7 @@ app.get('/stream/:filename', (req, res) => {
 
     res.writeHead(206, headers);
 
-    const videoStream = fs.createReadStream(filePath, { start, end });
+    const videoStream = fs.createReadStream(file, { start, end });
     videoStream.pipe(res);
   });
 });
