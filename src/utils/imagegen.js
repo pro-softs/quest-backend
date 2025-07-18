@@ -1,4 +1,7 @@
-const MAX_RETRIES = 5;
+import pLimit from 'p-limit';
+
+const MAX_CONCURRENT_REQUESTS = 1; // Only 1 at a time
+const MAX_REQUESTS_PER_MIN = 6;    // OpenAI limit
 
 export class DalleImageGenerator {
   constructor(client) {
@@ -19,9 +22,7 @@ export class DalleImageGenerator {
         });
 
         const imageData = response.data?.[0]?.b64_json;
-        if (!imageData) {
-          throw new Error('No image data returned from OpenAI');
-        }
+        if (!imageData) throw new Error('No image data returned from OpenAI');
 
         return Buffer.from(imageData, 'base64');
       } catch (err) {
@@ -29,9 +30,7 @@ export class DalleImageGenerator {
         const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
 
         console.warn(`❌ Attempt ${attempt + 1} failed${isRateLimit ? ' (Rate Limit)' : ''}: ${err.message}`);
-        if (attempt >= MAX_RETRIES - 1 || !isRateLimit) {
-          throw err;
-        }
+        if (attempt >= MAX_RETRIES - 1 || !isRateLimit) throw err;
 
         console.log(`⏳ Waiting ${Math.round(delay)}ms before retry...`);
         await new Promise(res => setTimeout(res, delay));
@@ -40,30 +39,35 @@ export class DalleImageGenerator {
     }
   }
 
-  // ✅ Batch image generation method
+  // ✅ Throttled version to respect OpenAI rate limits
   async generateImagesInParallel(promptsWithMeta) {
-    const results = await Promise.allSettled(
-      promptsWithMeta.map(({ prompt, episode, scene }) =>
-        this.generateImage(prompt).then(buffer => ({
-          episode,
-          scene,
-          prompt,
-          imageBuffer: buffer,
-        }))
-      )
-    );
+    const limit = pLimit(MAX_CONCURRENT_REQUESTS); // Run one at a time
+    const delayBetween = 10000; // ~10s between each request => 6/min
 
-    return results.map((res, idx) => {
-      const meta = promptsWithMeta[idx];
-      if (res.status === 'fulfilled') {
-        return res.value;
-      } else {
-        console.error(`❌ Failed to generate image for [Episode ${meta.episode} | Scene ${meta.scene}]: ${res.reason.message}`);
-        return {
-          ...meta,
-          error: res.reason.message,
-        };
+    const results = [];
+
+    for (let i = 0; i < promptsWithMeta.length; i++) {
+      const { prompt, episode, scene } = promptsWithMeta[i];
+
+      const limitedTask = limit(async () => {
+        const buffer = await this.generateImage(prompt);
+        return { episode, scene, prompt, imageBuffer: buffer };
+      });
+
+      try {
+        const result = await limitedTask();
+        results.push(result);
+      } catch (err) {
+        console.error(`❌ Failed to generate image for [Ep ${episode} | Scene ${scene}]: ${err.message}`);
+        results.push({ episode, scene, prompt, error: err.message });
       }
-    });
+
+      if (i < promptsWithMeta.length - 1) {
+        console.log(`⏳ Waiting ${delayBetween}ms before next request...`);
+        await new Promise(res => setTimeout(res, delayBetween));
+      }
+    }
+
+    return results;
   }
 }
