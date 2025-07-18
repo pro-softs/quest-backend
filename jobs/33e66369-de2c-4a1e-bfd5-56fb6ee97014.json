@@ -1,0 +1,48 @@
+{
+  "topic": "Know more about dreams",
+  "age_group": "16-18",
+  "genre": "cartoon",
+  "episodes": [
+    {
+      "title": "Episode 1: The Gateway to Dreams",
+      "scenes": [
+        {
+          "description": "A teenage girl, Luna, lies peacefully in her cozy bedroom at night. Moonlight softly filters through the window, casting gentle shadows. Around her head, a subtle glowing swirl of abstract shapes—stars, clouds, and neurons—begin to form, symbolizing the onset of dreaming. Her closed eyes and serene face express the mystery and wonder of sleep.",
+          "voiceover": "Dreams begin when our brain enters a special sleep phase called REM, where vivid images and stories come alive inside our minds.",
+          "image_prompt": "A teenage girl peacefully sleeping in a cozy bedroom at night, moonlight casting soft shadows, ethereal glowing swirls of stars, clouds, and neuron-like shapes around her head symbolizing dreaming, clean colorful expressive style like early Disney films, anime style, cinematic lighting, ultra-detailed, vibrant colors, close-up on her serene face",
+          "scene_id": 1,
+          "voice_url": "/33e66369-de2c-4a1e-bfd5-56fb6ee97014/ep1/scene1.mp3"
+        },
+        {
+          "description": "Inside Luna’s mind, a fantastical, colorful dreamscape unfolds. Floating islands shaped like brain cells drift in a starry sky. Dream characters—whimsical animals and abstract shapes—interact playfully. Streams of light pulse between the islands, representing the electrical activity of neurons firing during REM sleep. The scene pulses with dynamic energy and wonder.",
+          "voiceover": "During dreams, our brain’s neurons fire in unique patterns, creating the vivid stories and emotions we experience while asleep.",
+          "image_prompt": "Surreal dreamscape inside a teenage girl's mind, floating brain-cell-shaped islands in a starry sky, whimsical dream characters like playful animals and abstract shapes interacting, glowing streams of light connecting islands symbolizing neuron activity, clean colorful expressive style like early Disney films, anime style, cinematic lighting, ultra-detailed, vibrant color palette, wide shot with dynamic energy",
+          "scene_id": 2,
+          "voice_url": "/33e66369-de2c-4a1e-bfd5-56fb6ee97014/ep1/scene2.mp3"
+        }
+      ]
+    },
+    {
+      "title": "Episode 2: Why Do We Dream?",
+      "scenes": [
+        {
+          "description": "Luna stands at a glowing crossroads in the dreamscape, surrounded by symbolic doors labeled with emotions: 'Fear,' 'Joy,' 'Memory,' and 'Problem-solving.' Each door pulses with different colors and patterns. Luna reaches out hesitantly toward the door labeled 'Memory,' her face a mix of curiosity and hope.",
+          "voiceover": "Dreams help us process emotions, store memories, and even solve problems by exploring different parts of our brain while we rest.",
+          "image_prompt": "Teenage girl standing in a glowing, colorful dreamscape crossroads with large symbolic doors labeled 'Fear,' 'Joy,' 'Memory,' and 'Problem-solving,' each door glowing with distinct vibrant colors and patterns, girl reaching toward the 'Memory' door with a curious hopeful expression, clean colorful expressive style like early Disney films, anime style, cinematic lighting, ultra-detailed, vibrant colors, medium shot with emotional tension",
+          "scene_id": 11,
+          "voice_url": "/33e66369-de2c-4a1e-bfd5-56fb6ee97014/ep2/scene11.mp3"
+        },
+        {
+          "description": "The 'Memory' door opens into a radiant library made of light and swirling energy, filled with floating books and glowing images representing memories. Luna steps inside, touching one glowing image that ripples with warmth. Around her, neuron-shaped shelves pulse gently, illustrating how dreams help organize and strengthen memory connections.",
+          "voiceover": "By replaying and reorganizing memories during dreams, our brain strengthens learning and helps us understand our experiences better.",
+          "image_prompt": "A radiant dream library made of light and swirling energy, floating glowing books and images representing memories, teenage girl stepping inside touching a glowing memory image with a warm ripple effect, neuron-shaped shelves pulsing gently, clean colorful expressive style like early Disney films, anime style, cinematic lighting, ultra-detailed, vibrant color palette, close-up with a sense of wonder and discovery",
+          "scene_id": 12,
+          "voice_url": "/33e66369-de2c-4a1e-bfd5-56fb6ee97014/ep2/scene12.mp3"
+        }
+      ]
+    }
+  ],
+  "requestId": "33e66369-de2c-4a1e-bfd5-56fb6ee97014",
+  "timestamp": "2025-07-18T06:16:16.160Z",
+  "status": "queued"
+}

@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import dotenv from 'dotenv';
 dotenv.config();
 
-ffmpeg.setFfmpegPath('/usr/bin/ffmpeg');
+ffmpeg.setFfmpegPath('/usr/local/bin/ffmpeg');
 ffmpeg.setFfprobePath(ffprobePath.path);
 const limit = pLimit(6); // Adjust based on your system's capacity
 

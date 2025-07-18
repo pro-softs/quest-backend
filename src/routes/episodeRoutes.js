@@ -107,11 +107,13 @@ router.post("/compile-episodes", async (req, res) => {
     await createScenes(episodes, requestId);
     const concatListPaths = await createConcatListFilesForAllEpisodes(episodes, requestId);
     const episodePaths = await buildAllEpisodes(concatListPaths, requestId);
-    const urls = await uploadAllEpisodes(episodePaths);
+    let urls = await uploadAllEpisodes(episodePaths);
 
+    urls = urls.map(({ url, _ }, index) => ({ url, title: episodes[index].title }));
+    
     res.json({ status: 'done', requestId, video_urls: urls });
 
-    cleanupEpisodeFolder(requestId);
+    // cleanupEpisodeFolder(requestId);
   } catch (err) {
     console.error('Compilation error:', err);
     res.status(500).json({ error: 'Video compilation failed' });
