@@ -113,7 +113,7 @@ router.post("/compile-episodes", async (req, res) => {
     
     res.json({ status: 'done', requestId, video_urls: urls });
 
-    // cleanupEpisodeFolder(requestId);
+    cleanupEpisodeFolder(requestId);
   } catch (err) {
     console.error('Compilation error:', err);
     res.status(500).json({ error: 'Video compilation failed' });

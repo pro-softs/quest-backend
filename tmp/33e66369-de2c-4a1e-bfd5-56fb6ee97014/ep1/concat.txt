@@ -1,2 +1,0 @@
-file '/Users/progupta/Documents/projects/quest-app/backend/quest-backend-self/tmp/33e66369-de2c-4a1e-bfd5-56fb6ee97014/ep1/scene1.mp4'
-file '/Users/progupta/Documents/projects/quest-app/backend/quest-backend-self/tmp/33e66369-de2c-4a1e-bfd5-56fb6ee97014/ep1/scene2.mp4'
