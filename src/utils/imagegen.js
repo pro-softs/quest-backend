@@ -50,13 +50,15 @@ export class DalleImageGenerator {
     for (let i = 0; i < promptsWithMeta.length; i++) {
       const { prompt, episode, scene } = promptsWithMeta[i];
 
-      const limitedTask = limit(async () => {
-        const buffer = await this.generateImage(prompt);
-        return { episode, scene, prompt, imageBuffer: buffer };
-      });
+      const limitedTask = limit(() => this.generateImage(prompt).then(buffer => ({
+        episode,
+        scene,
+        prompt,
+        imageBuffer: buffer,
+      })));
 
       try {
-        const result = await limitedTask();
+        const result = await limitedTask;
         results.push(result);
       } catch (err) {
         console.error(`❌ Failed to generate image for [Ep ${episode} | Scene ${scene}]: ${err.message}`);
