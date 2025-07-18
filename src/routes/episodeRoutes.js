@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs-extra';
 import { generateVoice } from '../utils/generateVoiceOvers.js';
-import { buildAllEpisodes, createConcatListFilesForAllEpisodes, createScenes } from '../utils/ffmpegPipeline.js';
+import { buildAllEpisodes, createConcatListFilesForAllEpisodes, createScenes, cleanupEpisodeFolder } from '../utils/ffmpegPipeline.js';
 import { getJobFromQueue, updateJobInQueue } from '../utils/jobQueue.js';
 import { EpisodeService } from '../services/episodeService.js';
 import { exec } from 'child_process';
