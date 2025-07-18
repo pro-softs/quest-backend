@@ -11,7 +11,7 @@ dotenv.config();
 
 ffmpeg.setFfmpegPath('/usr/bin/ffmpeg');
 ffmpeg.setFfprobePath(ffprobePath.path);
-const limit = pLimit(6); // Adjust based on your system's capacity
+const limit = pLimit(2); // Adjust based on your system's capacity
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
