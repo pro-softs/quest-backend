@@ -2,6 +2,7 @@ import pLimit from 'p-limit';
 
 const MAX_CONCURRENT_REQUESTS = 1; // Only 1 at a time
 const MAX_REQUESTS_PER_MIN = 6;    // OpenAI limit
+const MAX_RETRIES = 4;
 
 export class DalleImageGenerator {
   constructor(client) {
