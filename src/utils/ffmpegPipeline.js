@@ -48,6 +48,7 @@ export async function cleanupEpisodeFolder(requestId) {
 
 async function createSceneVideo(imagePath, audioPath, outputPath, fadeDuration = 1) {
   const audioDuration = await getAudioDuration(audioPath);
+  console.log('audiodurtion', audioPath, audioDuration);
   const fadeStart = Math.max(0, audioDuration - fadeDuration);
 
   return new Promise((resolve, reject) => {
