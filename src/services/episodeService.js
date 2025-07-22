@@ -133,7 +133,7 @@ Every image prompt must include this style implicitly or explicitly.
 ---
 
 **Format:**  
-Structure the story into **3 to 4 short episodes**.  
+Structure the story into **2 short episodes**.  
 Each episode must include:
 - A creative title
 - Exactly **3 to 4 scenes**
