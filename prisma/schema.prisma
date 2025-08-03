@@ -27,11 +27,11 @@ model User {
 model Video {
   id            String   @id @default(cuid())
   userId        String
-  title         String
-  topic         String
-  subject       String
-  genre         String
-  ageGroup      String
+  title         String?
+  topic         String?
+  subject       String?
+  genre         String?
+  ageGroup      String?
   episodeCount  Int      @default(0)
   totalDuration String?
   thumbnail     String?
@@ -67,13 +67,12 @@ model Scene {
   episodeId       String
   sceneId         Int
   description     String
-  dialogue        String
   imagePrompt     String
-  voiceover String
+  voiceover       String
   imageUrl        String?
   audioUrl        String?
   duration        Int?
-  orderIndex      Int
+  orderIndex      Int?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   

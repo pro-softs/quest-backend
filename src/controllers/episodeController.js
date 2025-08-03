@@ -72,21 +72,23 @@ export const generateEpisodes = async (req, res) => {
             });
           }
         }
+
+        const response = {
+          status: "story_done",
+          videoId: videoRecord?.id,
+          episodes: storyStructure.episodes,
+        };
+    
+        console.log(`✅ Generated ${episodes.length} episodes with ${episodes.reduce((total, ep) => total + ep.scenes.length, 0)} total scenes`);
+        res.json(response);
       } catch (dbError) {
         console.error('Database save error:', dbError);
-        // Continue with generation even if DB save fails
+        res.status(500).json({ 
+          error: 'Failed to generate episodes', 
+          message: dbError.message 
+        });
       }
-    }
-
-    const response = {
-      status: "story_done",
-      videoId: videoRecord?.id,
-      episodes: storyStructure.episodes,
-    };
-
-    console.log(`✅ Generated ${episodes.length} episodes with ${episodes.reduce((total, ep) => total + ep.scenes.length, 0)} total scenes`);
-    
-    res.json(response);
+    }    
   } catch (error) {
     console.error('❌ Error generating episodes:', error);
     res.status(500).json({ 

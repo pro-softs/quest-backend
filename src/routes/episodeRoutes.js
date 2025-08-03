@@ -119,7 +119,7 @@ router.post('/generate-voiceovers', authenticateToken,  async (req, res) => {
         // Update scene in database with audio URL
         await prisma.scene.update({
           where: { id: scene.id },
-          data: { audioUrl: `/${audioKey}` }
+          data: { audioUrl: `/${voicePath}` }
         });
       }
     }
