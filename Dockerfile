@@ -18,6 +18,9 @@ RUN npm install
 # Copy the rest of the app code
 COPY . .
 
+# Generate Prisma client
+RUN npx prisma generate --schema=./prisma/schema.prisma
+
 # Expose your app's port (if applicable)
 EXPOSE 3000
 
