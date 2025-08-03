@@ -47,6 +47,8 @@ export const login = async (req, res) => {
       }
     }
 
+    console.log(userData, 'sds');
+
     // Find or create user
     let user = await prisma.user.findUnique({
       where: { email: userData.email }
