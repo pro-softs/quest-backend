@@ -32,16 +32,16 @@ export class DalleImageGenerator {
   async generateImagesInParallel(promptsWithMeta) {
     const results = [];
 
-    for (const { prompt, episode, scene } of promptsWithMeta) {
+    for (const { prompt, episode, scene, dbId } of promptsWithMeta) {
       const task = () =>
         this.generateImage(prompt)
           .then(buffer => {
             console.log(`✅ [Ep ${episode} | Scene ${scene}] image generated`);
-            results.push({ episode, scene, prompt, imageBuffer: buffer });
+            results.push({ episode, scene, prompt, imageBuffer: buffer, dbId });
           })
           .catch(err => {
             console.error(`❌ [Ep ${episode} | Scene ${scene}] failed: ${err.message}`);
-            results.push({ episode, scene, prompt, error: err.message });
+            results.push({ episode, scene, prompt, error: err.message, dbId });
           });
 
       this.queue.add(task); // ⏳ Schedule with rate-limited queue
