@@ -3,6 +3,7 @@ import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import prisma from '../utils/prisma.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -40,7 +41,7 @@ export class EpisodeService {
     }
   }
 
-  async generateImageFromPrompt(prompts, requestId) {
+  async generateImageFromPrompt(prompts, videoId) {
     const results = await this.openai.generateImages(prompts);
 
     // Save to disk or DB
@@ -49,10 +50,16 @@ export class EpisodeService {
         const sceneNumber = result.scene;
         const episodeNumber = result.episode;
 
-        const imageKey = `${requestId}/ep${episodeNumber}/scene${sceneNumber}.webp`;
+        const imageKey = `${videoId}/ep${episodeNumber}/scene${sceneNumber}.webp`;
         const imagePath = path.join(this.imagesDir, imageKey);
 
         fs.writeFileSync(imagePath, result.imageBuffer);
+
+        // Update scene in database with image URL
+        await prisma.scene.update({
+          where: { id: sceneNumber },
+          data: { imageUrl: `${imagePath}` }
+        });
       }
     }
   }

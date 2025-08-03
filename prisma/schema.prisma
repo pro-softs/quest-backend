@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  avatar    String?
+  provider  String   @default("google")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  videos    Video[]
+  
+  @@map("users")
+}
+
+model Video {
+  id            String   @id @default(cuid())
+  userId        String
+  title         String
+  topic         String
+  subject       String
+  genre         String
+  ageGroup      String
+  episodeCount  Int      @default(0)
+  totalDuration String?
+  thumbnail     String?
+  status        String   @default("processing")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  episodes      Episode[]
+  
+  @@map("videos")
+}
+
+model Episode {
+  id          String   @id @default(cuid())
+  videoId     String
+  title       String
+  url         String?
+  duration    String?
+  thumbnail   String?
+  orderIndex  Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  video       Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  scenes      Scene[]
+  
+  @@map("episodes")
+}
+
+model Scene {
+  id              String   @id @default(cuid())
+  episodeId       String
+  sceneId         Int
+  description     String
+  dialogue        String
+  imagePrompt     String
+  voiceover String
+  imageUrl        String?
+  audioUrl        String?
+  duration        Int?
+  orderIndex      Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  episode         Episode  @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  
+  @@map("scenes")
+}

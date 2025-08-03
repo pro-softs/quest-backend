@@ -1,11 +1,10 @@
 import { EpisodeService } from '../services/episodeService.js';
-import { saveJobToQueue } from '../utils/jobQueue.js';
 import { v4 as uuidv4 } from 'uuid';
+import prisma from '../utils/prisma.js';
 
 export const generateEpisodes = async (req, res) => {
   try {
     const { topic, age_group, genre, subject } = req.body;
-    const requestId = uuidv4();
 
     console.log(`📝 Generating episodes for topic: "${topic}" (${genre}, ${age_group})`);
 
@@ -30,22 +29,59 @@ export const generateEpisodes = async (req, res) => {
       };
     });
 
+    let videoRecord = null;
+    if (userId) {
+      try {
+        videoRecord = await prisma.video.create({
+          data: {
+            userId,
+            title: episodes[0]?.title || `Video about ${topic}`,
+            topic,
+            subject,
+            genre,
+            ageGroup: age_group,
+            episodeCount: episodes.length,
+            status: 'processing'
+          }
+        });
+
+        // Create episodes in database
+        for (let i = 0; i < episodes.length; i++) {
+          const episode = episodes[i];
+          const episodeRecord = await prisma.episode.create({
+            data: {
+              videoId: videoRecord.id,
+              title: episode.title,
+              orderIndex: i + 1
+            }
+          });
+
+          // Create scenes in database
+          for (let j = 0; j < episode.scenes.length; j++) {
+            const scene = episode.scenes[j];
+            await prisma.scene.create({
+              data: {
+                episodeId: episodeRecord.id,
+                sceneId: scene.scene_id,
+                description: scene.description,
+                imagePrompt: scene.image_prompt,
+                voiceover: scene.voiceover,
+                orderIndex: j + 1
+              }
+            });
+          }
+        }
+      } catch (dbError) {
+        console.error('Database save error:', dbError);
+        // Continue with generation even if DB save fails
+      }
+    }
+
     const response = {
       status: "story_done",
-      requestId,
+      videoId: videoRecord?.id,
       episodes: storyStructure.episodes,
     };
-
-    // Save job to queue for video rendering simulation
-    await saveJobToQueue(requestId, {
-      topic,
-      age_group,
-      genre,
-      episodes,
-      requestId,
-      timestamp: new Date().toISOString(),
-      status: 'queued'
-    });
 
     console.log(`✅ Generated ${episodes.length} episodes with ${episodes.reduce((total, ep) => total + ep.scenes.length, 0)} total scenes`);
     

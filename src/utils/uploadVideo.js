@@ -18,7 +18,6 @@ export async function uploadAllEpisodes(episodes) {
 }
 
 export const uploadVideo = async (filePath, name) => {
-  console.log(filePath, 'jere');
   const ex = fs.existsSync(filePath);
   console.log(ex, 'sdsds');
   try {

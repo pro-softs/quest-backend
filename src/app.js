@@ -1,4 +1,3 @@
-// src/app.js
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -9,7 +8,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import episodeRoutes from './routes/episodeRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
-import { generateVoice } from './utils/generateVoiceOvers.js';
+import authRoutes from './routes/authRoutes.js';
+import videoRoutes from './routes/videoRoutes.js';
 
 dotenv.config();
 
@@ -18,14 +18,8 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const OUTPUT_DIR = path.join(__dirname, '..', 'videos');
 
-// Create jobs directory if it doesn't exist
-const jobsDir = path.join(__dirname, '..', 'jobs');
 const tmpDir = path.join(__dirname, '..', 'tmp');
-if (!fs.existsSync(jobsDir)) {
-  fs.mkdirSync(jobsDir, { recursive: true });
-}
 if (!fs.existsSync(tmpDir)) {
   fs.mkdirSync(tmpDir, { recursive: true });
 }
@@ -40,43 +34,8 @@ app.use(express.static('public'));
 
 // Routes
 app.use('/api', episodeRoutes);
-
-app.get('/stream/:requestId', (req, res) => {
-  const filePath = OUTPUT_DIR + '/' + req.params.requestId;
-  const filename = req.query.filename;
-  const file = filePath + `/${filename}`;
-
-  console.log(file, 'sds');
-
-  fs.stat(file, (err, stats) => {
-    if (err) {
-      return res.sendStatus(404);
-    }
-
-    const range = req.headers.range;
-    if (!range) {
-      return res.status(416).send('Range header required');
-    }
-
-    const videoSize = stats.size;
-    const CHUNK_SIZE = 10 ** 6; // 1MB chunks
-    const start = Number(range.replace(/\D/g, ''));
-    const end = Math.min(start + CHUNK_SIZE, videoSize - 1);
-
-    const contentLength = end - start + 1;
-    const headers = {
-      'Content-Range': `bytes ${start}-${end}/${videoSize}`,
-      'Accept-Ranges': 'bytes',
-      'Content-Length': contentLength,
-      'Content-Type': 'video/mp4',
-    };
-
-    res.writeHead(206, headers);
-
-    const videoStream = fs.createReadStream(file, { start, end });
-    videoStream.pipe(res);
-  });
-});
+app.use('/api', authRoutes);
+app.use('/api', videoRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -93,7 +52,6 @@ app.use('*', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📁 Jobs directory: ${jobsDir}`);
 });
 
 export default app;
