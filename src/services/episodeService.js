@@ -57,7 +57,7 @@ export class EpisodeService {
 
         // Update scene in database with image URL
         await prisma.scene.update({
-          where: { id: sceneNumber },
+          where: { id: result.dbId },
           data: { imageUrl: `${imagePath}` }
         });
       }

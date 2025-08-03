@@ -60,6 +60,7 @@ router.post('/generate-scenes', authenticateToken,  async (req, res) => {
         prompts.push({
           episode: episodeIndex + 1,
           scene: scene.sceneId,
+          dbId: scene.id,
           prompt: scene.imagePrompt,
         });
       });
