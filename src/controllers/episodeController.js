@@ -5,6 +5,7 @@ import prisma from '../utils/prisma.js';
 export const generateEpisodes = async (req, res) => {
   try {
     const { topic, age_group, genre, subject } = req.body;
+    const userId = req.user?.id;
 
     console.log(`📝 Generating episodes for topic: "${topic}" (${genre}, ${age_group})`);
 
