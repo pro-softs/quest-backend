@@ -110,7 +110,7 @@ router.post('/generate-voiceovers', authenticateToken,  async (req, res) => {
 
       for (let scIndex = 0; scIndex < ep.scenes.length; scIndex++) {
         const scene = ep.scenes[scIndex];
-        const sceneNumber = scene.scene_id || scIndex + 1;
+        const sceneNumber = scene.sceneId || scIndex + 1;
 
         const audioKey = `${videoId}/ep${epIndex + 1}/scene${sceneNumber}.mp3`;
         const voicePath = path.join(TMP_DIR, audioKey);

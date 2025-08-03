@@ -86,7 +86,7 @@ export async function createScenes(episodes, requestId) {
 
   for (const [epIndex, episode] of episodes.entries()) {
     for (const [scIndex, scene] of episode.scenes.entries()) {
-      const sceneNumber = scene.scene_id || scIndex + 1;
+      const sceneNumber = scene.sceneId || scIndex + 1;
       const epDir = path.join(TMP_DIR, requestId, `ep${epIndex + 1}`);
 
       const imagePath = path.join(epDir, `scene${sceneNumber}.webp`);
@@ -109,7 +109,7 @@ export async function createConcatListFilesForAllEpisodes(episodes, requestId) {
 
     // Collect scene video paths for this episode
     const sceneVideoPaths = episode.scenes.map(
-      (scene, _) => path.join(epDir, `scene${scene.scene_id}.mp4`)
+      (scene, _) => path.join(epDir, `scene${scene.sceneId}.mp4`)
     );
 
     // Write concat list
