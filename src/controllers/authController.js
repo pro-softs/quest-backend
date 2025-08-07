@@ -1,9 +1,9 @@
 import prisma from '../utils/prisma.js';
-import { generateToken, verifyGoogleToken } from '../utils/auth.js';
+import { generateToken, verifyFirebaseToken } from '../utils/auth.js';
 
 export const login = async (req, res) => {
   try {
-    const { provider, token: googleToken } = req.body;
+    const { provider, token: firebaseToken } = req.body;
 
     if (!provider) {
       return res.status(400).json({
@@ -15,39 +15,37 @@ export const login = async (req, res) => {
       });
     }
 
-    if (provider !== 'google') {
+    if (provider !== 'google' && provider !== 'firebase') {
       return res.status(400).json({
         success: false,
         error: {
           code: 'VALIDATION_ERROR',
-          message: 'Only Google authentication is supported'
+          message: 'Only Google/Firebase authentication is supported'
         }
       });
     }
 
     let userData = { avatar: null };
 
-    // If Google token is provided, verify it
-    if (googleToken) {
+    // If Firebase token is provided, verify it
+    if (firebaseToken) {
       try {
-        const googleData = await verifyGoogleToken(googleToken);
+        const firebaseData = await verifyFirebaseToken(firebaseToken);
         userData = {
-          email: googleData.email,
-          name: googleData.name,
-          avatar: googleData.avatar
+          email: firebaseData.email,
+          name: firebaseData.name,
+          avatar: firebaseData.avatar,
         };
       } catch (error) {
         return res.status(400).json({
           success: false,
           error: {
             code: 'VALIDATION_ERROR',
-            message: 'Invalid Google token'
+            message: `Invalid Firebase token: ${error.message}`
           }
         });
       }
     }
-
-    console.log(userData, 'sds');
 
     // Find or create user
     let user = await prisma.user.findUnique({
@@ -60,7 +58,7 @@ export const login = async (req, res) => {
           email: userData.email,
           name: userData.name,
           avatar: userData.avatar,
-          provider: 'google'
+          provider: provider,
         }
       });
     } else {
@@ -69,7 +67,7 @@ export const login = async (req, res) => {
         where: { id: user.id },
         data: {
           name: userData.name,
-          avatar: userData.avatar
+          avatar: userData.avatar,
         }
       });
     }

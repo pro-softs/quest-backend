@@ -1,10 +1,44 @@
 import jwt from 'jsonwebtoken';
-import { OAuth2Client } from 'google-auth-library';
+import admin from 'firebase-admin';
+import { readFileSync } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID;
+const FIREBASE_SERVICE_ACCOUNT_PATH = process.env.FIREBASE_SERVICE_ACCOUNT_PATH;
 
-const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
+// Initialize Firebase Admin SDK
+let firebaseApp;
+try {
+  if (FIREBASE_SERVICE_ACCOUNT_PATH) {
+    const serviceAccountPath = path.resolve(FIREBASE_SERVICE_ACCOUNT_PATH);
+    const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
+    
+    firebaseApp = admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+      projectId: FIREBASE_PROJECT_ID
+    });
+  } else if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+    // Support for service account key as environment variable
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+    
+    // Required to fix \n issue in Railway/Vercel/Render
+    serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+    
+    firebaseApp = admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+      projectId: FIREBASE_PROJECT_ID
+    });
+  } else {
+    console.warn('⚠️ Firebase service account not configured. Google token verification will fail.');
+  }
+} catch (error) {
+  console.error('❌ Firebase initialization error:', error.message);
+}
 
 export const generateToken = (user) => {
   return jwt.sign(
@@ -26,22 +60,25 @@ export const verifyToken = (token) => {
   }
 };
 
-export const verifyGoogleToken = async (token) => {
+export const verifyFirebaseToken = async (idToken) => {
   try {
-    const ticket = await googleClient.verifyIdToken({
-      idToken: token,
-      audience: GOOGLE_CLIENT_ID,
-    });
+    if (!firebaseApp) {
+      throw new Error('Firebase not initialized');
+    }
+
+    // Verify the Firebase ID token
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
     
-    const payload = ticket.getPayload();
     return {
-      email: payload.email,
-      name: payload.name,
-      avatar: payload.picture,
-      googleId: payload.sub
+      uid: decodedToken.uid,
+      email: decodedToken.email,
+      name: decodedToken.name || decodedToken.email?.split('@')[0],
+      avatar: decodedToken.picture,
+      emailVerified: decodedToken.email_verified,
+      provider: decodedToken.firebase.sign_in_provider
     };
   } catch (error) {
-    console.log(error, 'signin error');
-    throw new Error('Invalid Google token');
+    console.error('Firebase token verification error:', error);
+    throw new Error(`Invalid Firebase token: ${error.message}`);
   }
 };
