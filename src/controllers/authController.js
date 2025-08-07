@@ -3,9 +3,9 @@ import { generateToken, verifyGoogleToken } from '../utils/auth.js';
 
 export const login = async (req, res) => {
   try {
-    const { email, provider, token: googleToken } = req.body;
+    const { provider, token: googleToken } = req.body;
 
-    if (!email || !provider) {
+    if (!provider) {
       return res.status(400).json({
         success: false,
         error: {
@@ -25,7 +25,7 @@ export const login = async (req, res) => {
       });
     }
 
-    let userData = { email, name: email.split('@')[0], avatar: null };
+    let userData = { avatar: null };
 
     // If Google token is provided, verify it
     if (googleToken) {
