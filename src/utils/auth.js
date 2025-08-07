@@ -41,6 +41,7 @@ export const verifyGoogleToken = async (token) => {
       googleId: payload.sub
     };
   } catch (error) {
+    console.log(error, 'signin error');
     throw new Error('Invalid Google token');
   }
 };

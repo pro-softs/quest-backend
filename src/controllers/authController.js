@@ -37,7 +37,6 @@ export const login = async (req, res) => {
           avatar: googleData.avatar
         };
       } catch (error) {
-        console.log(error, 'errorsigni');
         return res.status(400).json({
           success: false,
           error: {
