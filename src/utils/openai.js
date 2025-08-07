@@ -1,6 +1,7 @@
 import { OpenAI } from 'openai';
 import dotenv from 'dotenv';
 import { DalleImageGenerator } from './imagegen.js';
+import { APILogger } from './logger.js';
 
 dotenv.config();
 
@@ -41,6 +42,12 @@ export class OpenAIService {
         max_tokens: maxTokens,
         temperature: 0.7,
       });
+
+      // Log successful text generation
+      const usage = chatResponse.usage;
+      const tokens = usage?.total_tokens || maxTokens;
+      const cost = APILogger.calculateCost(tokens, 'gpt-4.1-mini');
+      await APILogger.logAPIUsage(videoId, tokens, cost, 'text_generation');
 
       return chatResponse.choices[0].message.content.trim();
     } catch (error) {

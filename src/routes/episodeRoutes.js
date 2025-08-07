@@ -13,6 +13,7 @@ import { uploadAllEpisodes } from '../utils/uploadVideo.js';
 import { authenticateToken } from '../middleware/auth.js';
 
 import { videoGenerationLimiter } from '../middleware/rateLimiter.js';
+import { APILogger } from '../utils/logger.js';
 
 const router = express.Router();
 
@@ -116,6 +117,12 @@ router.post('/generate-voiceovers', authenticateToken,  async (req, res) => {
         const voicePath = path.join(TMP_DIR, audioKey);
 
         await generateVoice(scene.voiceover, voicePath);
+
+        // Log successful text generation
+        const chars = scene.voiceover.length || 0;
+        const ratePer1k = 0.015; // standard voice
+        const cost = (chars / 1000) * ratePer1k;
+        await APILogger.logAPIUsage(videoId, tokens, cost, 'voiceover_generation');
         
         // Update scene in database with audio URL
         await prisma.scene.update({

@@ -33,7 +33,7 @@ export const apiLimiter = rateLimit({
 // Rate limiter for video generation
 export const videoGenerationLimiter = rateLimit({
   windowMs: 24 * 60 * 60 * 1000, // 24 hours
-  max: 100, // limit each IP to 10 video generations per day
+  max: 10, // limit each IP to 10 video generations per day
   message: {
     success: false,
     error: {

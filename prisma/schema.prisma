@@ -80,3 +80,28 @@ model Scene {
   
   @@map("scenes")
 }
+
+model Config {
+  id              String   @id @default(cuid())
+  subjects        Json     // Array of subjects
+  ageGroups       Json     // Array of age groups
+  styles          Json     // Array of styles/genres
+  noOfEpisodes    Int      @default(3)
+  noOfScenes      Int      @default(6)
+  noOfGenerations Int      @default(10)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@map("configs")
+}
+
+model Log {
+  id        String   @id @default(cuid())
+  videoId   String?
+  tokens    Int
+  cost      Float
+  usedFor   String   // 'story_generation', 'image_generation', 'voiceover_generation'
+  createdAt DateTime @default(now())
+  
+  @@map("logs")
+}
