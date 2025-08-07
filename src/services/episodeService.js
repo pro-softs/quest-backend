@@ -111,7 +111,7 @@ export class EpisodeService {
     }
   }
 
-  async generateStory(topic, age_group, genre, subject) {
+  async generateStory(topic, age_group, genre, subject, no_episodes = 3, no_scenes = 6) {
     const finalImageStyle = imageStylesByGenre[genre] || "cinematic, vivid, emotionally rich";
 
     const prompt = `You are a world-class educational story designer creating short fictional video series for Gen Z learners (ages ${age_group}) in the style of **${genre}**, focused on the subject: **${subject}**.
@@ -140,10 +140,10 @@ Every image prompt must include this style implicitly or explicitly.
 ---
 
 **Format:**  
-Structure the story into **2 short episodes**.  
+Structure the story into **${no_episodes} short episodes**.  
 Each episode must include:
 - A creative title
-- Exactly **3 to 4 scenes**
+- Exactly **${no_scenes} scenes**
 
 Each scene must include:
 - "description": A vivid visual description (setting, action, emotion)

@@ -10,9 +10,21 @@ export const generateEpisodes = async (req, res) => {
     console.log(`📝 Generating episodes for topic: "${topic}" (${genre}, ${age_group})`);
 
     const episodeService = new EpisodeService();
+
+    let config = await prisma.config.findFirst({
+      orderBy: { createdAt: 'desc' }
+    });
+
+    let noOfEpisodes = 3; 
+    let noOfScenes = 6;
+
+    if(config) {
+      noOfEpisodes = config.noOfEpisodes;
+      noOfScenes = config.noOfScenes;
+    }
     
     // Generate the story structure first
-    const storyStructure = await episodeService.generateStory(topic, age_group, genre, subject);
+    const storyStructure = await episodeService.generateStory(topic, age_group, genre, subject, noOfEpisodes, noOfScenes);
 
     const episodes = storyStructure.episodes.map((episode, episodeIndex) => {      
       const processedScenes = episode.scenes.map((scene, sceneIndex) => {
