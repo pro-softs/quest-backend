@@ -10,6 +10,7 @@ import episodeRoutes from './routes/episodeRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import authRoutes from './routes/authRoutes.js';
 import videoRoutes from './routes/videoRoutes.js';
+import configRoutes from './routes/configRoutes.js';
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ app.use(express.static('public'));
 app.use('/api', episodeRoutes);
 app.use('/api', authRoutes);
 app.use('/api', videoRoutes);
+app.use('/api', configRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
