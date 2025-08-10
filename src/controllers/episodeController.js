@@ -9,7 +9,21 @@ export const generateEpisodes = async (req, res) => {
 
     console.log(`📝 Generating episodes for topic: "${topic}" (${genre}, ${age_group})`);
 
+    let videoRecord = null;
+
+    videoRecord = await prisma.video.create({
+      data: {
+        userId,
+        topic,
+        subject,
+        genre,
+        ageGroup: age_group,
+        status: 'processing'
+      }
+    });
+
     const episodeService = new EpisodeService();
+    episodeService.setVideoId(videoRecord.id);
 
     let config = await prisma.config.findFirst({
       orderBy: { createdAt: 'desc' }
@@ -42,20 +56,13 @@ export const generateEpisodes = async (req, res) => {
       };
     });
 
-    let videoRecord = null;
     if (userId) {
       try {
-        videoRecord = await prisma.video.create({
-          data: {
-            userId,
-            title: episodes[0]?.title || `Video about ${topic}`,
-            topic,
-            subject,
-            genre,
-            ageGroup: age_group,
-            episodeCount: episodes.length,
-            status: 'processing'
-          }
+        //update a field
+        videoRecord = await prisma.video.update({
+          where: { id: videoRecord.id },
+          title: episodes[0]?.title || `Video about ${topic}`,
+          episodeCount: episodes.length,
         });
 
         // Create episodes in database

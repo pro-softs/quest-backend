@@ -29,11 +29,15 @@ export class OpenAIService {
     return results;
   }
 
-  async generateText(prompt, systemPrompt, maxTokens = 4000) {
+  async generateText(prompt, videoId, systemPrompt) {
+    let maxTokens = 4000;
+
     if (!this.apiKey) {
       console.log('🔄 Using fallback response (no API key)');
       return null;
     }
+
+    console.log('prompt', prompt);
 
     try {
       const chatResponse = await this.client.chat.completions.create({
@@ -49,6 +53,7 @@ export class OpenAIService {
       const cost = APILogger.calculateCost(tokens, 'gpt-4.1-mini');
       await APILogger.logAPIUsage(videoId, tokens, cost, 'text_generation');
 
+      console.log(chatResponse, 'chatresponse');
       return chatResponse.choices[0].message.content.trim();
     } catch (error) {
       console.error('OpenAI API Error:', error);

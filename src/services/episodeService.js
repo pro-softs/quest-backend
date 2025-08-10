@@ -35,13 +35,17 @@ export class EpisodeService {
     this.ensureImagesDirectory();
   }
 
+  setVideoId(vId) {
+    this.videoId = vId;
+  }
+
   ensureImagesDirectory() {
     if (!fs.existsSync(this.imagesDir)) {
       fs.mkdirSync(this.imagesDir, { recursive: true });
     }
   }
 
-  async generateImageFromPrompt(prompts, videoId) {
+  async generateImageFromPrompt(prompts) {
     const results = await this.openai.generateImages(prompts);
 
     // Save to disk or DB
@@ -50,7 +54,7 @@ export class EpisodeService {
         const sceneNumber = result.scene;
         const episodeNumber = result.episode;
 
-        const imageKey = `${videoId}/ep${episodeNumber}/scene${sceneNumber}.webp`;
+        const imageKey = `${this.videoId}/ep${episodeNumber}/scene${sceneNumber}.webp`;
         const imagePath = path.join(this.imagesDir, imageKey);
 
         fs.writeFileSync(imagePath, result.imageBuffer);
@@ -190,7 +194,7 @@ Each scene must include:
 `;
 
     try {
-      const response = await this.openai.generateText(prompt);
+      const response = await this.openai.generateText(prompt, this.videoId);
       console.log(response, 'response');
       return JSON.parse(cleanOpenAIResponse(response));
     } catch (error) {
@@ -216,7 +220,7 @@ Target audience age: "${age_group}"
 Make the prompt rich in visuals, lighting, background, and emotion.`;
 
     try {
-      const response = await this.openai.generateText(prompt, systemPromp);
+      const response = await this.openai.generateText(prompt, this.videoId, systemPromp);
       return response.replace(/"/g, '').trim();
     } catch (error) {
       console.error('Error generating image prompt:', error);
@@ -237,7 +241,7 @@ Return: a single narration line only.
 `;
 
     try {
-      const response = await this.openai.generateText(prompt);
+      const response = await this.openai.generateText(prompt, this.videoId);
       return response.replace(/"/g, '').trim();
     } catch (error) {
       console.error('Error generating voiceover script:', error);

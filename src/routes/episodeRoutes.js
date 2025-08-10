@@ -27,6 +27,7 @@ router.post('/generate-episodes',  videoGenerationLimiter, authenticateToken, va
 router.post('/generate-scenes', authenticateToken,  async (req, res) => {
   const { videoId } = req.body;
   const episodeService = new EpisodeService();
+  episodeService.setVideoId(videoId);
 
   if (!videoId) {
     return res.status(400).json({ error: 'Missing videoId' });
