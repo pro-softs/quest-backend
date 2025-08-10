@@ -123,7 +123,7 @@ router.post('/generate-voiceovers', authenticateToken,  async (req, res) => {
         const chars = scene.voiceover.length || 0;
         const ratePer1k = 0.015; // standard voice
         const cost = (chars / 1000) * ratePer1k;
-        await APILogger.logAPIUsage(videoId, tokens, cost, 'voiceover_generation');
+        await APILogger.logAPIUsage(videoId, 0, cost, 'voiceover_generation');
         
         // Update scene in database with audio URL
         await prisma.scene.update({
