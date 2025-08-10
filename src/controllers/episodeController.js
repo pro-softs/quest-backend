@@ -61,8 +61,10 @@ export const generateEpisodes = async (req, res) => {
         //update a field
         videoRecord = await prisma.video.update({
           where: { id: videoRecord.id },
-          title: episodes[0]?.title || `Video about ${topic}`,
-          episodeCount: episodes.length,
+          data: {
+            title: episodes[0]?.title || `Video about ${topic}`,
+            episodeCount: episodes.length,
+          }
         });
 
         // Create episodes in database
