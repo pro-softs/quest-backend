@@ -14,7 +14,7 @@ const episodeSchema = Joi.object({
     'any.only': 'Genre must be one of: anime, realistic, cartoon, fantasy, sci-fi, documentary',
     'any.required': 'Genre is required'
   }),
-  subject: Joi.string().valid('physics', 'chemistry', 'cartoon', 'mathematics', 'biology', 'history', 'geography', 'computer', 'astronomy').required().messages({
+  subject: Joi.string().valid('physics', 'chemistry', 'cartoon', 'mathematics', 'biology', 'history', 'geography', 'computer', 'astronomy', 'general').required().messages({
     'any.required': 'Subject is required'
   })
 });
