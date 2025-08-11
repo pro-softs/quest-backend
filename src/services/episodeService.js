@@ -79,14 +79,16 @@ export class EpisodeService {
       clean = clean.replace(regex, good);
     }
     // Remove explicit text-in-image requests
-    clean = clean.replace(/\b(text|caption|quote|label|slogan|sign)\b/gi, "");
-    
-    // Append safe grounding
     clean = clean.replace(
       /\b(young|teen|teenage|child|boy|girl|infant|kid|minor)[’']?s?\s+(hand|face|arm|leg|foot|hair|shoulder|eye|mouth|skin)\b/gi,
       (_, __, bodyPart) => `small ${bodyPart}`
     ); 
-       
+
+    clean = clean.replace(/\b(text|caption|quote|label|slogan|sign)\b/gi, "");
+   
+    // Append safe grounding
+    clean += ", safe educational scene, no harmful content, G-rated, wholesome, age-appropriate";
+    
     return clean.trim();
   }
 
