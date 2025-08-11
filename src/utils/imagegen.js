@@ -1,8 +1,8 @@
 import PQueue from 'p-queue';
 
 const MAX_REQUESTS_PER_MIN = 5;
-
 export class DalleImageGenerator {
+  // 1. Define banned/replacement words
   constructor(client) {
     this.client = client;
 

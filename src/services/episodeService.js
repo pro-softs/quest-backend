@@ -8,6 +8,28 @@ import prisma from '../utils/prisma.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const bannedMap = {
+  "blood": "bright red paint",
+  "bloody": "paint-splattered",
+  "gun": "mechanical device",
+  "knife": "kitchen utensil",
+  "sword": "ceremonial prop",
+  "battle": "friendly competition",
+  "war": "large-scale challenge",
+  "kill": "defeat",
+  "dead": "inactive",
+  "death": "disappearance",
+  "corpse": "statue",
+  "explosion": "burst of light",
+  "bomb": "large balloon",
+  "attack": "approach",
+  "shoot": "launch",
+  "injury": "paint mark",
+  "nude": "fully clothed",
+  "naked": "fully dressed",
+  "violence": "intense action"
+};
+
 const imageStylesByGenre = {
   cartoon: 'Clean, colorful, expressive; like early Disney films.',
   anime: "anime style, cinematic lighting, Studio Ghibli look, vivid color palette, 4K detail",
@@ -43,6 +65,31 @@ export class EpisodeService {
     if (!fs.existsSync(this.imagesDir)) {
       fs.mkdirSync(this.imagesDir, { recursive: true });
     }
+  }
+
+  sanitizeStory(storyJson) {
+    const safeStory = JSON.parse(JSON.stringify(storyJson)); // deep copy
+      safeStory.episodes.forEach(episode => {
+        episode.scenes.forEach(scene => {
+          scene.image_prompt = sanitizePrompt(scene.image_prompt);
+        });
+      });
+    return safeStory;
+  }
+
+  sanitizePrompt(prompt) {
+    let clean = prompt;
+    for (const [bad, good] of Object.entries(bannedMap)) {
+      const regex = new RegExp(`\\b${bad}\\b`, "gi");
+      clean = clean.replace(regex, good);
+    }
+    // Remove explicit text-in-image requests
+    clean = clean.replace(/\b(text|caption|quote|label|slogan|sign)\b/gi, "");
+    
+    // Append safe grounding
+    clean += ", safe educational scene, no harmful content, G-rated, wholesome, age-appropriate";
+    
+    return clean.trim();
   }
 
   async generateImageFromPrompt(prompts) {
@@ -120,29 +167,32 @@ export class EpisodeService {
 
     const prompt = `You are a world-class educational story designer creating short fictional video series for Gen Z learners (ages ${age_group}) in the style of **${genre}**, focused on the subject: **${subject}**.
 
-Your mission is to transform the following topic into a **visually rich, emotionally engaging, and intellectually clear** story that teaches the core concept while entertaining.
+Your mission: Transform the following topic into a **visually rich, emotionally engaging, and intellectually clear** story that teaches the core concept while entertaining — without including ANY unsafe or sensitive imagery.
 
 ---
-
 **Topic:** "${topic}"
-
 ---
 
+**Safety Rules (Mandatory):**
+- The story must be **G-rated** and suitable for all audiences.
+- No unsafe, violent, sexual, political, or discriminatory content.
+- No weapons, gore, blood, injuries, explosions, or depictions of harm.
+- Replace unsafe concepts with safe, symbolic, or playful equivalents.
+- No text, captions, slogans, or symbols visible in the scene.
+- Focus on **positive, inspiring, curiosity-driven visuals**.
+- Use sports, nature, games, puzzles, or friendly competition instead of battles or conflict.
+
+---
 **Goal:**  
 Teach the core idea or concept clearly through story.  
 Use fictional characters, cinematic visuals, and emotional narration — the audience must leave with a real understanding of the topic.
 
 ---
-
 **Visual Style:**  
-Use this global image style across all scenes for consistency:
-
-> "${finalImageStyle}"  
-
-Every image prompt must include this style implicitly or explicitly.
+Apply this style in every image:
+> "${finalImageStyle}"
 
 ---
-
 **Format:**  
 Structure the story into **${no_episodes} short episodes**.  
 Each episode must include:
@@ -150,45 +200,37 @@ Each episode must include:
 - Exactly **${no_scenes} scenes**
 
 Each scene must include:
-- "description": A vivid visual description (setting, action, emotion)
-- "voiceover": A short 1–3 line narration that explains what’s happening and helps teach the concept (NO character dialogue)
-- "image_prompt": A rich prompt that can be used by DALL·E or similar models, combining the scene’s content with the global image style
+- "description": Vivid visual description (setting, action, emotion), always safe and positive
+- "voiceover": Short 1–3 line narration explaining what’s happening and teaching the concept (NO dialogue)
+- "image_prompt": Rich DALL·E-compatible prompt combining the scene’s content with the global style, **already safe for G-rated output**
 
 ---
-
 **Guidelines:**
-- Use cinematic pacing and emotional tension, but always return to the **core concept you're teaching**
-- No dialogues — use only narrator-style voiceovers that explain visually what's happening and convey understanding
-- Use fictional or anime-style characters if helpful, but **don’t invent fantasy history or mythology** unless needed to explain the concept
-- Infuse real educational insights into the story naturally (use analogies, metaphors, visual examples)
-- Every scene should:
-  - Be visually unique and move the story forward
-  - Reinforce or build toward **clear understanding** of the topic
-- Keep language age-appropriate, emotionally resonant, and curiosity-driven
-- Ensure **image prompts** are:
-  - Visually descriptive and coherent
-  - Consistent with the global image style
+- Cinematic pacing and emotional tension are welcome — but only in **safe, wholesome ways**.
+- Use analogies, metaphors, and creative visuals to explain the educational point.
+- All scenes must be visually unique, safe, and build toward understanding.
+- Age-appropriate, curiosity-driven language.
+- Each image prompt must:
+  - Be coherent and visually descriptive
   - Include characters, setting, subject elements, and emotions
-  - Add camera direction (e.g. close-up, wide shot) if helpful
+  - Match the global style
+  - Contain **no unsafe or restricted terms**
 
 ---
-
-**Output (Strict JSON format):**
+**Output (Strict JSON):**
 {
-  "image_style": "anime style, cinematic lighting, ultra-detailed, vibrant color palette, dramatic angles, 4K composition",
+  "image_style": "${finalImageStyle}",
   "episodes": [
     {
       "title": "Episode 1: [Your title]",
       "scenes": [
         {
-          "description": "A vivid visual of what's happening",
+          "description": "Safe, vivid visual description",
           "voiceover": "Narration for this scene",
-          "image_prompt": "Prompt for DALL·E or similar model to generate this scene, using the global image style"
+          "image_prompt": "Safe, vivid image prompt with no unsafe content"
         }
-        ...
       ]
     }
-    ...
   ]
 }
 `;

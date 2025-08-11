@@ -39,8 +39,9 @@ export const generateEpisodes = async (req, res) => {
     
     // Generate the story structure first
     const storyStructure = await episodeService.generateStory(topic, age_group, genre, subject, noOfEpisodes, noOfScenes);
+    const safeStory = await episodeService.sanitizeStory(storyStructure);
 
-    const episodes = storyStructure.episodes.map((episode, episodeIndex) => {      
+    const episodes = safeStory.episodes.map((episode, episodeIndex) => {      
       const processedScenes = episode.scenes.map((scene, sceneIndex) => {
         const sceneId = episodeIndex * 10 + sceneIndex + 1;            
       
