@@ -28,6 +28,7 @@ if (!fs.existsSync(tmpDir)) {
 // Middleware
 app.use(helmet());
 app.use(cors());
+app.enable('trust proxy');
 app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
