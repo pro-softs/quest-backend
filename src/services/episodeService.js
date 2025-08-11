@@ -9,6 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const bannedMap = {
+  // Violence / unsafe
   "blood": "bright red paint",
   "bloody": "paint-splattered",
   "gun": "mechanical device",
@@ -25,9 +26,13 @@ const bannedMap = {
   "attack": "approach",
   "shoot": "launch",
   "injury": "paint mark",
-  "nude": "fully clothed",
-  "naked": "fully dressed",
-  "violence": "intense action"
+  "violence": "intense action",
+
+  // Risky verbs for touching
+  "touching": "reaching toward",
+  "grasping": "holding gently",
+  "caressing": "resting on",
+  "clutching": "holding lightly"
 };
 
 const imageStylesByGenre = {
@@ -77,8 +82,11 @@ export class EpisodeService {
     clean = clean.replace(/\b(text|caption|quote|label|slogan|sign)\b/gi, "");
     
     // Append safe grounding
-    clean += ", safe educational scene, no harmful content, G-rated, wholesome, age-appropriate";
-    
+    clean = clean.replace(
+      /\b(young|teen|teenage|child|boy|girl|infant|kid|minor)[’']?s?\s+(hand|face|arm|leg|foot|hair|shoulder|eye|mouth|skin)\b/gi,
+      (_, __, bodyPart) => `small ${bodyPart}`
+    ); 
+       
     return clean.trim();
   }
 
@@ -173,14 +181,12 @@ Your mission: Transform the following topic into a **visually rich, emotionally 
 **Topic:** "${topic}"
 ---
 
-**Safety Rules (Mandatory):**
-- The story must be **G-rated** and suitable for all audiences.
-- No unsafe, violent, sexual, political, or discriminatory content.
-- No weapons, gore, blood, injuries, explosions, or depictions of harm.
-- Replace unsafe concepts with safe, symbolic, or playful equivalents.
-- No text, captions, slogans, or symbols visible in the scene.
-- Focus on **positive, inspiring, curiosity-driven visuals**.
-- Use sports, nature, games, puzzles, or friendly competition instead of battles or conflict.
+**Safety Rules (Extra Restrictions for Image Prompts):**
+- Never combine explicit age (e.g., "young girl", "teen boy") with body parts in the same phrase.
+- Describe characters as "child character", "student", "person", or "figure" instead of using explicit age descriptors, unless age is educationally necessary (e.g., for biology lesson).
+- Avoid isolating body parts (e.g., "girl's hand", "boy's face") unless clearly part of an activity or object-focused scene.
+- Use neutral verbs like "holding", "resting", "pointing toward", "reaching toward" instead of "touching", "grasping", or "caressing".
+- All physical interactions must be safe, G-rated, and clearly educational.
 
 ---
 **Goal:**  
