@@ -86,7 +86,7 @@ export class EpisodeService {
     const safeStory = JSON.parse(JSON.stringify(storyJson)); // deep copy
       safeStory.episodes.forEach(episode => {
         episode.scenes.forEach(scene => {
-          scene.image_prompt = sanitizePrompt(scene.image_prompt);
+          scene.image_prompt = this.sanitizePrompt(scene.image_prompt);
         });
       });
     return safeStory;
