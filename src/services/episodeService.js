@@ -67,16 +67,6 @@ export class EpisodeService {
     }
   }
 
-  sanitizeStory(storyJson) {
-    const safeStory = JSON.parse(JSON.stringify(storyJson)); // deep copy
-      safeStory.episodes.forEach(episode => {
-        episode.scenes.forEach(scene => {
-          scene.image_prompt = sanitizePrompt(scene.image_prompt);
-        });
-      });
-    return safeStory;
-  }
-
   sanitizePrompt(prompt) {
     let clean = prompt;
     for (const [bad, good] of Object.entries(bannedMap)) {
@@ -90,6 +80,16 @@ export class EpisodeService {
     clean += ", safe educational scene, no harmful content, G-rated, wholesome, age-appropriate";
     
     return clean.trim();
+  }
+
+  sanitizeStory(storyJson) {
+    const safeStory = JSON.parse(JSON.stringify(storyJson)); // deep copy
+      safeStory.episodes.forEach(episode => {
+        episode.scenes.forEach(scene => {
+          scene.image_prompt = sanitizePrompt(scene.image_prompt);
+        });
+      });
+    return safeStory;
   }
 
   async generateImageFromPrompt(prompts) {
