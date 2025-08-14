@@ -1,4 +1,4 @@
-# Episode Generator Backend
+# Episode Generator Backend - MVP
 
 A Node.js backend service that generates story-driven video episodes using AI, designed for content creators and educational platforms.
 
