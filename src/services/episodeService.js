@@ -182,15 +182,6 @@ Your mission: Transform the following topic into a **visually rich, emotionally 
 ---
 **Topic:** "${topic}"
 ---
-
-**Safety Rules (Extra Restrictions for Image Prompts):**
-- Never combine explicit age (e.g., "young girl", "teen boy") with body parts in the same phrase.
-- Describe characters as "child character", "student", "person", or "figure" instead of using explicit age descriptors, unless age is educationally necessary (e.g., for biology lesson).
-- Avoid isolating body parts (e.g., "girl's hand", "boy's face") unless clearly part of an activity or object-focused scene.
-- Use neutral verbs like "holding", "resting", "pointing toward", "reaching toward" instead of "touching", "grasping", or "caressing".
-- All physical interactions must be safe, G-rated, and clearly educational.
-
----
 **Goal:**  
 Teach the core idea or concept clearly through story.  
 Use fictional characters, cinematic visuals, and emotional narration — the audience must leave with a real understanding of the topic.
@@ -213,6 +204,7 @@ Each scene must include:
 - "image_prompt": Rich DALL·E-compatible prompt combining the scene’s content with the global style, **already safe for G-rated output**
 
 ---
+
 **Guidelines:**
 - Cinematic pacing and emotional tension are welcome — but only in **safe, wholesome ways**.
 - Use analogies, metaphors, and creative visuals to explain the educational point.
@@ -223,6 +215,33 @@ Each scene must include:
   - Include characters, setting, subject elements, and emotions
   - Match the global style
   - Contain **no unsafe or restricted terms**
+
+IMPORTANT: Under no circumstances should any "image_prompt" or image-descriptive text include:
+  - Any explicit age words tied to body parts (e.g., "child's chest", "young girl's hand", "teen boy's face"). Do not use the words: child, kid, toddler, baby, minor, young, teen, teenage, adolescent, boy, girl, lad, lass, infant in any image_prompt.
+  - The phrase "inside view" or any phrase that implies internal anatomical imagery of a person. If you must show anatomy, use neutral, diagram-first phrasing (see examples below).
+  - Any isolated body part references tied to a person (e.g., "person's hand", "person's arm") unless framed as a non-sensitive, clearly educational object-focused action ("a small hand resting on a window" should be rewritten to "a small hand resting on a window surface" and avoid age words).
+  - Any request to show readable text, signs, captions, or slogans in the image.
+  - Any words likely to trigger safety filters: blood, gore, kill, weapon, nude, sexual, suicide, hanging, drowning, etc.
+
+REPLACEMENT RULES (MANDATORY):
+  - Use neutral nouns: "character", "person", "figure", "student", or "illustrated model". Never use age-specific terms in image_prompt.
+  - For anatomy/biology scenes: use phrasing like "animated cutaway diagram of an illustrated model's torso" or "stylized diagram showing airflow into cartoon-style lungs." Always add "cartoon-style", "animated diagram", or "illustrated model" to clarify non-realistic depiction.
+  - Replace "inside view" with "animated cutaway diagram" or "stylized cross-section illustration".
+  - Replace potentially sensitive verbs: "touching" -> "reaching toward", "caressing" -> "resting on", "grasping" -> "holding gently".
+  - Always append a safety grounding phrase to every image_prompt: ", safe educational scene, G-rated, no harmful content, age-appropriate."
+
+FORMAT RULES:
+  - Output must be JSON exactly in the requested structure (image_style + episodes + scenes).
+  - Each scene.image_prompt must be a single line string that follows the rules above.
+
+EXAMPLES (use these phrasing templates):
+  - BAD: "inside view of a child character’s chest with glowing airflow entering the lungs"
+  - GOOD: "animated cutaway diagram of an illustrated model's torso showing stylized glowing airflow entering cartoon-style lungs, glowing bubble-like air sacs (alveoli) lighting up, safe educational scene, G-rated"
+
+  - BAD: "close-up of a young girl's hand touching glass"
+  - GOOD: "cinematic close-up of a small hand reaching toward a smooth glass pane on a polished wooden table, warm lighting, curious expression implied, safe educational scene, G-rated"
+
+NOTE: The model should never use the banned words in any image_prompt. If the topic requires age be noted for pedagogical reasons, put it only in non-image descriptive fields (e.g., scene.description or meta) and NEVER in image_prompt.
 
 ---
 **Output (Strict JSON):**

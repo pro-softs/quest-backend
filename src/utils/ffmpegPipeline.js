@@ -1,11 +1,9 @@
 import ffmpeg from 'fluent-ffmpeg';
 import ffprobePath from 'ffprobe-static';
-import axios from 'axios';
 import pLimit from 'p-limit';
 import fs from 'fs-extra';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { v4 as uuidv4 } from 'uuid';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -46,9 +44,8 @@ export async function cleanupEpisodeFolder(requestId) {
   }
 }
 
-async function createSceneVideo(imagePath, audioPath, outputPath, fadeDuration = 1) {
+async function createSceneVideo(imagePath, audioPath, outputPath, fadeDuration = 0.5) {
   const audioDuration = await getAudioDuration(audioPath);
-  console.log('audiodurtion', audioPath, audioDuration);
   const fadeStart = Math.max(0, audioDuration - fadeDuration);
 
   return new Promise((resolve, reject) => {
@@ -56,16 +53,18 @@ async function createSceneVideo(imagePath, audioPath, outputPath, fadeDuration =
       .input(imagePath)
       .inputOptions('-loop 1')
       .input(audioPath)
+      // ⬇️ Ensure the video is cut to audio length
+      .outputOptions(`-t ${audioDuration}`)
+      // ⬇️ Apply fades exactly within audio length
       .videoFilters(`fade=t=out:st=${fadeStart}:d=${fadeDuration}`)
       .audioFilters(`afade=t=out:st=${fadeStart}:d=${fadeDuration}`)
       .outputOptions([
-        '-shortest',
         '-pix_fmt yuv420p',
         '-c:v libx264',
         '-c:a aac',
-        '-movflags +faststart',
+        '-movflags +faststart'
       ])
-      .output(outputPath)
+      .save(outputPath)
       .on('end', () => {
         console.log('✅ Scene video created:', outputPath);
         resolve();
@@ -73,8 +72,7 @@ async function createSceneVideo(imagePath, audioPath, outputPath, fadeDuration =
       .on('error', (err) => {
         console.error('❌ FFmpeg error:', err.message);
         reject(err);
-      })
-      .run();
+      });
   });
 }
 
